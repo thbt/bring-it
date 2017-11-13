@@ -1,9 +1,9 @@
 import {WishList} from "./wish-list";
-import {SuggestionsList} from "./suggestions-list";
+import {SuggestionList} from "./suggestion-list";
 
 export class OfficialEventList extends WishList {
   /**
    * A suggestionsList always belongs to a officialEventList
    */
-  suggestionsList : SuggestionsList;
+  suggestions : SuggestionList[];
 }
