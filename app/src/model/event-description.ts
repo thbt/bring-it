@@ -1,4 +1,4 @@
-export class EventDescription {
+export interface EventDescription {
   id: string;
   theme: string;
   location : string;

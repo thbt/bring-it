@@ -1,6 +1,6 @@
 import {WishListItem} from "./wish-list-item";
 
-export abstract class WishList {
+export interface WishList {
   id: string;
-  itemList : WishListItem[];
+  items : WishListItem[];
 }

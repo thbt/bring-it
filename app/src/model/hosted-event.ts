@@ -1,6 +1,6 @@
 import {EventDescription} from "./event-description";
 
-export class HostedEvent {
+export interface HostedEvent {
   id: string;
   name : string;
   type : String;

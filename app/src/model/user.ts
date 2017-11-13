@@ -1,4 +1,4 @@
-export abstract class User {
+export interface User {
   id : string;
   pseudonym : string;
   profilePicture : Object;
