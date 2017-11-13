@@ -6,7 +6,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import {WishlistPageModule} from "../pages/wishlist/wishlist.module";
+import { WishlistPageModule } from "../pages/wishlist/wishlist.module";
+import { EventsPageModule } from '../pages/events/events.module';
 
 @NgModule({
   declarations: [
@@ -15,8 +16,9 @@ import {WishlistPageModule} from "../pages/wishlist/wishlist.module";
   ],
   imports: [
     BrowserModule,
+    IonicModule.forRoot(MyApp),
     WishlistPageModule,
-    IonicModule.forRoot(MyApp)
+    EventsPageModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
