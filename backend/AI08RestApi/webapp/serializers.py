@@ -1,7 +1,18 @@
 from rest_framework import serializers
-from . models import Employee
+from . models import Item
+from django.contrib.auth.models import User
 
-class employeeSerializer(serializers.ModelSerializer): #inherit from this class
+
+class ItemSerializer(serializers.ModelSerializer): #inherit from this class
+    owner = serializers.ReadOnlyField(source='user.id')
+    owners = serializers.ReadOnlyField(source='owner')
     class Meta:
-        model = Employee #define the class that's being serialized
-        fields = '__all__' #return all model's fields
+        model = Item
+        fields = ('id','name', 'owner', 'owners')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    items = serializers.PrimaryKeyRelatedField(many=True, queryset=Item.objects.all())
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'items')

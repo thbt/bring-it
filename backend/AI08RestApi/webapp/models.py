@@ -2,11 +2,10 @@ from django.db import models
 
 # Create your models here.
 
-
-class Employee(models.Model):
-    firstname = models.CharField(max_length=10)
-    lastname = models.CharField(max_length=10)
+class Item(models.Model):
+    name = models.CharField(max_length=10)
     id = models.AutoField(primary_key=True)
+    owner = models.ForeignKey('auth.User', related_name='items', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.firstname
+        return self.name

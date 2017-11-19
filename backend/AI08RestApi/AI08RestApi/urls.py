@@ -17,10 +17,21 @@ from django.conf.urls import url
 from django.contrib import admin
 from rest_framework.urlpatterns import format_suffix_patterns
 from webapp import views
+from django.conf.urls import include
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^employees/', views.EmployeeListAPI.as_view()),
-    url(r'^employee/$', views.EmployeeAPI.as_view()),
-    url(r'^employee/(?P<pk>[0-9]*)', views.EmployeeAPI.as_view()),
+    url(r'^items/', views.ItemList.as_view()),
+    url(r'^item/$', views.ItemDetails.as_view()),
+    url(r'^item/(?P<pk>[0-9]*)', views.ItemDetails.as_view()),
+
+    url(r'^users/', views.UserListAPI.as_view()),
+
+]
+
+
+urlpatterns += [
+    url(r'^api-auth/', include('rest_framework.urls',
+                               namespace='rest_framework')),
 ]

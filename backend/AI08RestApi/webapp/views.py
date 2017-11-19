@@ -5,55 +5,78 @@ from django.shortcuts import  get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from . models import Employee
-from . serializers import employeeSerializer
+from . models import Item
+from django.contrib.auth.models import User
+from rest_framework import generics
+from rest_framework import permissions
+
+from . serializers import ItemSerializer
+from . serializers import UserSerializer
+from .permissions import IsOwnerOrReadOnly
+
 
 # Create your views here.
 
-class EmployeeListAPI(APIView):
+class ItemList(generics.ListCreateAPIView):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+class ItemDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+
+class UserListAPI(APIView):
 
     def get(self,request): #matching to GET http verb
-        employees1 = Employee.objects.all()
-        serializer = employeeSerializer(employees1, many = True)
+        users = User.objects.all()
+        serializer = UserSerializer(users, many = True)
         return Response(serializer.data)
 
-    def post(self): #matching to POST http verb
-        pass
 
-class EmployeeAPI(APIView):
 
-    def __getEmployee(self, pk):
-        try:
-            employee = Employee.objects.get(pk=pk)
-            return employee
-        except Employee.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def get(self,request,pk):
-        employee = self.__getEmployee(pk)
-        serializer = employeeSerializer(employee)
-        return Response(serializer.data)
 
-    def post(self,request):
-        serializer = employeeSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self,request, pk):
-        employee = self.__getEmployee(pk)
-        serializer = employeeSerializer(employee, data=request.data) #second argument also means it's an update
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, pk):
-        employee = self.__getEmployee(pk)
-        employee.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
+#
+# class EmployeeAPI_BUGGED(APIView):
+#
+#     def __getEmployee(self, pk):
+#         try:
+#             employee = EmployeeFriend.objects.get(pk=pk)
+#             return employee
+#         except EmployeeFriend.DoesNotExist:
+#             return Response(status=status.HTTP_404_NOT_FOUND)
+#
+#     def get(self,request,pk):
+#         employee = self.__getEmployee(pk)
+#         serializer = employeeFriendSerializer(employee)
+#         return Response(serializer.data)
+#
+#     def post(self,request):
+#         serializer = employeeFriendSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+#     def put(self,request, pk):
+#         employee = self.__getEmployee(pk)
+#         serializer = employeeFriendSerializer(employee, data=request.data) #second argument also means it's an update
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+#
+#     def delete(self, request, pk):
+#         employee = self.__getEmployee(pk)
+#         employee.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
 
