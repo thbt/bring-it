@@ -1,6 +1,7 @@
-import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
-import { WishlistPage } from './wishlist';
+import {NgModule} from '@angular/core';
+import {IonicPageModule} from 'ionic-angular';
+import {WishlistPage} from './wishlist';
+import {ComponentsModule} from "../../components/components.module";
 
 @NgModule({
   declarations: [
@@ -8,6 +9,8 @@ import { WishlistPage } from './wishlist';
   ],
   imports: [
     IonicPageModule.forChild(WishlistPage),
+    ComponentsModule
   ],
 })
-export class WishlistPageModule {}
+export class WishlistPageModule {
+}
