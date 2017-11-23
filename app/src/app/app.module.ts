@@ -1,15 +1,14 @@
-import {BrowserModule} from '@angular/platform-browser';
-import {ErrorHandler, NgModule} from '@angular/core';
-import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
-import {SplashScreen} from '@ionic-native/splash-screen';
-import {StatusBar} from '@ionic-native/status-bar';
+import { BrowserModule } from '@angular/platform-browser';
+import { ErrorHandler, NgModule } from '@angular/core';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
 
-import {MyApp} from './app.component';
-import {HomePage} from '../pages/home/home';
-import {UserService} from '../providers/user/user.service';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { UserService } from '../providers/user/user.service';
 import { WishlistPageModule } from "../pages/wishlist/wishlist.module";
+import { EventService } from '../providers/event/event.service';
 import { EventsPageModule } from '../pages/events/events.module';
 
 @NgModule({
@@ -32,7 +31,8 @@ import { EventsPageModule } from '../pages/events/events.module';
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    UserService
+    UserService,
+    EventService,
   ]
 })
 export class AppModule {
