@@ -5,30 +5,16 @@ from django.shortcuts import  get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from . models import Item
+from . models import Item,Event
 from django.contrib.auth.models import User
 from rest_framework import generics
 from rest_framework import permissions
 
-from . serializers import ItemSerializer
-from . serializers import UserSerializer
+from . serializers import *
+
 from .permissions import IsOwnerOrReadOnly
 
-
 # Create your views here.
-
-class ItemList(generics.ListCreateAPIView):
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-class ItemDetails(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
 class UserListAPI(APIView):
 
