@@ -3,7 +3,8 @@ import { User } from "./user.model";
 export interface BringItItem {
   id: string;
   name: string;
-  score: number;
+  thumbsUp: number;
+  thumbsDown : number;
   quantity: number;
   broughtBy: User[];
   voters: User[];

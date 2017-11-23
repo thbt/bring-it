@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import { WishlistPage } from "../wishlist/wishlist";
+import { EventsPage } from '../events/events';
 
 @Component({
   selector: 'page-home',
@@ -11,4 +13,11 @@ export class HomePage {
 
   }
 
+  wishlistClicked() {
+    this.navCtrl.push(WishlistPage);
+  }
+
+  eventsClicked() {
+    this.navCtrl.push(EventsPage);
+  }
 }
