@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import {WishlistPageModule} from "../pages/wishlist/wishlist.module";
+import { EventService } from '../providers/event/event.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import {WishlistPageModule} from "../pages/wishlist/wishlist.module";
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    EventService
   ]
 })
 export class AppModule {}
