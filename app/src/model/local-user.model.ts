@@ -1,6 +1,7 @@
-import { User } from "./user.model";
+import {User} from "./user.model";
 
 /**
  * Unauthenticaded user
  */
-export interface LocalUser extends User {}
+export interface LocalUser extends User {
+}
