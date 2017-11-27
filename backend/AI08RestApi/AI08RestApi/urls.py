@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from webapp import mouloud
 from rest_framework.urlpatterns import format_suffix_patterns
 from webapp import views
 from webapp.views.event import *
@@ -26,7 +27,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # url(r'^items/$', views.ItemList.as_view()),
 
-    # url(r'^users/', views.UserListAPI.as_view()),
+    url(r'^users/', mouloud.UserListAPI.as_view()),
 
     url(r'^items/(?P<pEvent>[0-9]+)', views.item.EventItemList.as_view()),
     url(r'^items/$', views.item.ItemList.as_view()),

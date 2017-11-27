@@ -1,6 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
 
 class Item(models.Model):
     id = models.AutoField(primary_key=True)
@@ -13,8 +13,9 @@ class Item(models.Model):
     isApproved = models.BooleanField(default=False)
 
     owner = models.ForeignKey('auth.User', related_name='items', on_delete=models.CASCADE, null=True)
+    event = models.ForeignKey('Event', related_name='event_items', on_delete=models.CASCADE, null=True)
+    voters = models.ManyToManyField(User)
 
-    event = models.ForeignKey('Event', related_name='approved_items', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
@@ -33,3 +34,9 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profilePicture = models.ImageField(upload_to="./resources/ProfilePictures", null=True, max_length=255)
+
+
