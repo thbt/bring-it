@@ -11,15 +11,21 @@
 </ion-header>
 
 <ion-content text-center>
-  <form (ngSubmit)="createEvent()">
+  <form [formGroup]="eventForm"  (ngSubmit)="onCreateEvent()">
     <ion-list>
       <ion-item>
-        <ion-label floating>Type</ion-label>
-        <ion-input type="text" [(ngModel)]="event.type" name="type"></ion-input>
+        <ion-label floating>Type of event</ion-label>
+        <ion-input type="text" [(ngModel)]="event.type"  formControlName="eventType"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="!eventForm.controls.eventType.valid  && (eventForm.controls.eventType.dirty)" no-lines>
+        <div class="error-message">Please provide event type !</div>
       </ion-item>
       <ion-item>
-        <ion-label floating>Title</ion-label>
-        <ion-input [(ngModel)]="event.title" name="title"></ion-input>
+        <ion-label floating>Name of your event</ion-label>
+        <ion-input [(ngModel)]="event.title"   formControlName="eventName">></ion-input>
+      </ion-item>
+      <ion-item *ngIf="!eventForm.controls.eventName.valid  && (eventForm.controls.eventName.dirty)" no-lines>
+        <div class="error-message">Please provide event name !</div>
       </ion-item>
     </ion-list>
 
@@ -32,19 +38,19 @@
         <ion-list>
           <ion-item>
             <ion-label floating>Theme</ion-label>
-            <ion-input type="text" [(ngModel)]="event.theme" name="theme"></ion-input>
+            <ion-input type="text" [(ngModel)]="event.theme" name="theme" formControlName="eventTheme"></ion-input>
           </ion-item>
           <ion-item>
               <ion-label floating>Location</ion-label>
-              <ion-input [(ngModel)]="event.location" name="location"></ion-input>
+              <ion-input [(ngModel)]="event.location" name="location" formControlName="eventLocation"></ion-input>
             </ion-item>
           <ion-item>
             <ion-label floating>Date</ion-label>
-            <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="event.date" name="date"></ion-datetime>
+            <ion-datetime displayFormat="DD/MM/YYYY" [(ngModel)]="event.date" name="date" formControlName="eventDate"></ion-datetime>
           </ion-item>
           <ion-item>
               <ion-label floating>Description</ion-label>
-              <ion-textarea [(ngModel)]="event.description" name="description"></ion-textarea>
+              <ion-textarea [(ngModel)]="event.description" name="description" formControlName="eventDescription"></ion-textarea>
             </ion-item>
         </ion-list>
       </div>

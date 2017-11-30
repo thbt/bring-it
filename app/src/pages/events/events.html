@@ -1,6 +1,8 @@
 <ion-header>
   <ion-navbar color="primary">
     <ion-title>Bring It!</ion-title>
+    <ion-buttons end>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -8,9 +10,9 @@
   <button ion-button color="secondary">New event</button>
   <p *ngIf="!events || events.length == 0">You don't have any upcoming events... :(</p>
   <ion-list>
-    <ion-item *ngFor="let event of events">
+    <button ion-item *ngFor="let event of events" (click)="onClickOnEventItem(event)">
       <h2>{{event.title}}</h2>
       <p>{{event.date | date:'dd/MM/yy'}}</p>
-    </ion-item>
+    </button>
   </ion-list>
 </ion-content>

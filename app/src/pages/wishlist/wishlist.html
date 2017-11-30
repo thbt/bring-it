@@ -6,14 +6,59 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-title>wishlist</ion-title>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="onGoToEventsPage()">
+        <ion-icon name="home"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>Wishlist</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="onShareEvent()">
+        <ion-icon name="share-alt"></ion-icon>
+      </button>
+      <div *ngIf="isUserEventOwner">
+        <account></account>
+      </div>
+    </ion-buttons>
   </ion-navbar>
+
 </ion-header>
+
 <ion-content padding>
 
-  <h1>Just pick what you bring !</h1>
-  <ion-grid>
-      <item *ngFor="let item of mockBringitItems" [item]="item"></item>
-  </ion-grid>
+  <button ion-button clear (click)="itemsCollapsed = !itemsCollapsed">
+    Wished items &nbsp;
+    <ion-icon [name]="itemsCollapsed ? 'arrow-dropdown' : 'arrow-dropup'"></ion-icon>
+  </button>
+  <div *ngIf="!itemsCollapsed">
+    <ion-grid>
+      <item *ngFor="let item of items" [item]="item"
+            [connectedUser]="connectedUser"></item>
+    </ion-grid>
+  </div>
 
+  <br>
+
+  <button ion-button clear (click)="suggestionsCollapsed = !suggestionsCollapsed">
+    Suggestions &nbsp;
+    <ion-icon [name]="suggestionsCollapsed? 'arrow-dropdown' : 'arrow-dropup'"></ion-icon>
+  </button>
+  <div *ngIf="!suggestionsCollapsed">
+    <ion-grid>
+      <item *ngFor="let suggestion of suggestions" [item]="suggestion"
+            [connectedUser]="connectedUser"></item>
+    </ion-grid>
+  </div>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <div class="items-bar">
+      <ion-input type="text" [(ngModel)]="newItemName" placeholder="Type new item" clearInput="true" maxlength="20">
+      </ion-input>
+      <button [disabled]="newItemName.length==0" (click)="onAddNewItem()" ion-button>
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

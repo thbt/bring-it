@@ -14,19 +14,35 @@
 
 
 <ion-content padding>
-  <div  padding>
-    <form (ngSubmit)="login()" center>
+  <div padding>
+    <form [formGroup]="loginForm"  (ngSubmit)="onSubmit()" center>
       <ion-list>
         <ion-item no-lines>
           <h1>Open your account !</h1>
         </ion-item>
         <ion-item>
           <ion-label floating>Email address</ion-label>
-          <ion-input type="text" [(ngModel)]="inputEmail" name="email"></ion-input>
+          <ion-input type="text" [(ngModel)]="inputEmail"  formControlName="email"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!loginForm.controls.email.valid  && (loginForm.controls.email.dirty)" no-lines>
+          <div class="error-message">Please enter a valid email address !</div>
         </ion-item>
         <ion-item>
           <ion-label floating>Password</ion-label>
-          <ion-input type="password" [(ngModel)]="inputPassword" name="password"></ion-input>
+          <ion-input type="password" [(ngModel)]="inputPassword" formControlName="password"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!loginForm.controls.password.valid  && (loginForm.controls.password.dirty)" no-lines>
+          <div class="error-message">Please enter your password !</div>
+        </ion-item>
+        <ion-item>
+
+          <div *ngIf="errorMessage != ''"
+               class="alert alert-danger" padding>
+
+            <div style="color:#ff0033" *ngIf="errorMessage != ''">
+              {{errorMessage}}
+            </div>
+          </div>
         </ion-item>
       </ion-list>
       <div padding>
@@ -41,6 +57,9 @@
     </div>
     <div padding>
       <a> Forgot your password ?</a>
+    </div>
+    <div padding>
+      <a (click)="onCreateNewAccount()"> Create your account !</a>
     </div>
   </div>
 </ion-content>

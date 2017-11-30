@@ -1,5 +1,13 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { BringItEvent } from "../../model/classes/event.class";
+import { EventService } from "../../providers/event/event.service";
+import { UserService } from "../../providers/user/user.service";
+import { User } from "../../model/classes/user.class";
+import { BringItEventInterface } from "../../model/interfaces/event.model";
+import { WishlistPage } from "../wishlist/wishlist";
+import { BringItItemInterface } from "../../model/interfaces/item.model";
+import { BringItItem } from "../../model/classes/item.class";
 
 interface Event {
   title: string;
@@ -19,10 +27,48 @@ interface Event {
   templateUrl: 'events.html',
 })
 export class EventsPage {
-  events: Event[];
+  private events: BringItEvent[];
+  private connectedUser: User;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-    // TODO remove mock data
-    this.events = [{title:"BBQ @ Thibaut's", date: new Date(2017, 5, 30)}];
+  constructor(private navCtrl: NavController,
+              private  navParams: NavParams,
+              private eventService: EventService,
+              private userService: UserService) {
+    this.events = [];
+    this.displayEvents();
+  }
+
+  /**
+   * Method to display user events.
+   */
+  displayEvents() {
+    if (this.userService.connectedUser != null) {
+      this.eventService.getEventsByUserUuid(this.userService.connectedUser.uuid).subscribe(
+        response => {
+          let events: BringItEvent[] = [];
+          events = this.events;
+          console.log(response)
+          response.forEach(function (event) {
+            events.push(BringItEvent.fromBringItEventInterface(event));
+          });
+          this.events = events;
+        },
+        error => {
+          console.log(error);
+        },
+        () => {
+          console.log("User events are displayed")
+        }
+      )
+    }
+  }
+
+  /**
+   * Action made when user clicks on an event
+   * @param {BringItEvent} event
+   */
+  onClickOnEventItem(event: BringItEvent) {
+    this.eventService.currentEvent = event;
+    this.navCtrl.push(WishlistPage);
   }
 }

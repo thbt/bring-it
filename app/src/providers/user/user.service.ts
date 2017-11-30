@@ -1,9 +1,11 @@
-import {Injectable} from '@angular/core';
-import {Http, RequestOptions, Response} from '@angular/http';
+import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
-import {Observable} from "rxjs/Observable";
-import {AuthUser} from "../../model/auth-user.model";
+import { Observable } from "rxjs/Observable";
+import { AuthUserInterface } from "../../model/interfaces/auth-user.model";
 import "rxjs/add/operator/catch";
+import { HttpClient } from "@angular/common/http";
+import { UserInterface } from "../../model/interfaces/user.model";
+import { User } from "../../model/classes/user.class";
 
 /*
   Generated class for the UserProvider provider.
@@ -14,59 +16,70 @@ import "rxjs/add/operator/catch";
 @Injectable()
 export class UserService {
 
-  private userURL: string;
+  private loginURL: string = "http://localhost:3000/login"
+  private userURL: string = "http://localhost:3000/users";
+  private _connectedUser: User = null;
 
-  constructor(public http: Http) {
+  constructor(public http: HttpClient) {
   }
 
   /**
    * Method called to get an user by id.
    * @param {string} id
-   * @returns {Observable<AuthUser>}
+   * @returns {Observable<AuthUserInterface>}
    */
-  getUserById(id: string): Observable<AuthUser> {
+  getUserById(id: string): Observable<AuthUserInterface> {
     const url: string = `${this.userURL}/${id}`;
 
     //TODO add options for get request
-    let options = new RequestOptions();
 
-    return this.http.get(url, options)
-      .map(res => res.json())
+    return this.http.get(url)
+      .map(res => res)
+      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+  }
+
+  /**
+   * Method called to get an user by id.
+   * @param {string} id
+   * @returns {Observable<AuthUserInterface>}
+   */
+  getUserByEmailAndPassword(email: string, password: string): Observable<AuthUserInterface> {
+    const url: string = this.loginURL;
+    const message = {email: email, password: password};
+
+
+    return this.http.post(url, message)
+      .map(res => res)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
   /**
    * Method made to create an user.
    * @param {Object} body
-   * @returns {Observable<AuthUser>}
+   * @returns {Observable<AuthUserInterface>}
    */
-  postUser(user: AuthUser): Observable<AuthUser> {
+  postUser(user: AuthUserInterface): Observable<any> {
     const url: string = this.userURL;
 
     // TODO check if headers are correct
     let headers = new Headers({'Content-Type': 'application/json'});
 
-    //TODO add options for post request
-    let options = new RequestOptions();
-
-    return this.http.post(url, user, options)
-      .map((res: Response) => res.json())
+    return this.http.post(url, user)
+      .map((res: Response) => res)
   }
 
   /**
    * Method made  to update a created user.
    * @param {Object} body
-   * @returns {Observable<AuthUser>}
+   * @returns {Observable<AuthUserInterface>}
    */
-  updateUser(user: AuthUser): Observable<AuthUser> {
-    const url: string = `${this.userURL}/${user.id}`;
+  updateUser(user: AuthUserInterface): Observable<AuthUserInterface> {
+    const url: string = `${this.userURL}/${user.uuid}`;
     // TODO check if headers are correct
     let headers = new Headers({'Content-Type': 'application/json'});
 
-    //TODO add options for put request
-    let options = new RequestOptions();
-    this.http.put(url, user, options)
-    return this.http.put(url, user, options)
+    this.http.put(url, user)
+    return this.http.put(url, user)
       .map((res: Response) => res.json())
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
@@ -74,21 +87,26 @@ export class UserService {
   /**
    * Method made to delete a created user.
    * @param {Object} body
-   * @returns {Observable<AuthUser>}
+   * @returns {Observable<AuthUserInterface>}
    */
-  deleteUser(user: AuthUser): Observable<AuthUser> {
-    const url: string = `${this.userURL}/${user.id}`;
+  deleteUser(user: AuthUserInterface): Observable<AuthUserInterface> {
+    const url: string = `${this.userURL}/${user.uuid}`;
 
     // TODO check if headers are correct
     let headers = new Headers({'Content-Type': 'application/json'});
 
-    //TODO add options for delete request
-    let options = new RequestOptions();
 
-    return this.http.delete(url, options)
+    return this.http.delete(url)
       .map((res: Response) => res.json())
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
+  get connectedUser(): User {
+    return this._connectedUser;
+  }
+
+  set connectedUser(value: User) {
+    this._connectedUser = value;
+  }
 
 }
