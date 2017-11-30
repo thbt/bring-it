@@ -8,11 +8,14 @@
 
 <ion-content padding>
   <ion-list>
-    <ion-item (click)="wishlistClicked()">
+    <ion-item (click)="goto('wishlist')">
       Wishlist
     </ion-item>
-    <ion-item (click)="eventsClicked()">
+    <ion-item (click)="goto('events')">
       Events
+    </ion-item>
+    <ion-item (click)="goto('add-event')">
+      Add event
     </ion-item>
   </ion-list>
 </ion-content>
