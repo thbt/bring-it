@@ -38,6 +38,9 @@ urlpatterns = [
     url(r'^events/(?P<pUser>[0-9]+)', views.event.UserEventList.as_view()),
     url(r'^events/$', views.event.EventList.as_view()),
     url(r'^event/(?P<pk>[0-9]+)', views.event.EventDetails.as_view()),
+    url(r'^eventItems/(?P<pEvent>[0-9]+)', views.event.ItemEventList.as_view()),
+    url(r'^approvedEventItems/(?P<pEvent>[0-9]+)', views.event.ApprovedItemEventList.as_view()),
+    url(r'^suggestedEventItems/(?P<pEvent>[0-9]+)', views.event.SuggestedItemEventList.as_view()),
 ]
 
 urlpatterns += [

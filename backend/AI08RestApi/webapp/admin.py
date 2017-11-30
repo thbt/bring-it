@@ -1,7 +1,5 @@
 from django.contrib import admin
-from . models import Item
-from . models import Event
-from . models import Profile
+from . models import *
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
@@ -26,3 +24,6 @@ class UserAdmin(BaseUserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
+admin.site.register(Voter)
+admin.site.register(Brought)
+admin.site.register(Profile)
