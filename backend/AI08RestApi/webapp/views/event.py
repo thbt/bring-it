@@ -29,7 +29,7 @@ class EventList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(host=self.request.user.profile)
 
-# permet d'avoir la liste des items pour l'event passé en paramètre
+# permet d'avoir la liste des items pour l'event passe en parametre
 class ItemEventList(APIView):
     def get(self, request, pEvent):
         try:
@@ -39,7 +39,7 @@ class ItemEventList(APIView):
         except Item.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-# permet d'avoir la liste des items approuvé pour l'event passé en paramètre
+# permet d'avoir la liste des items approuve pour l'event passe en parametre
 class ApprovedItemEventList(APIView):
     def get(self, request, pEvent):
         try:
@@ -49,7 +49,7 @@ class ApprovedItemEventList(APIView):
         except Item.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-# permet d'avoir la liste des items suggérés pour l'event passé en paramètre
+# permet d'avoir la liste des items suggeres pour l'event passe en parametre
 class SuggestedItemEventList(APIView):
     def get(self, request, pEvent):
         try:

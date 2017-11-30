@@ -15,8 +15,6 @@ class Item(models.Model):
     event = models.ForeignKey('event', related_name='event_items', on_delete=models.CASCADE, null=True)
     suggestedBy = models.ForeignKey('profile', related_name='suggested_by', on_delete=models.CASCADE, null=True)
 
-    # différence entre le owner et le suggestedBy ??
-
     #voters = models.ManyToManyField(User)
 
     def __str__(self):
@@ -44,8 +42,8 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-# représente le lien *->* "vote" entre Item et Profile
-class Voter(models.Model):
+# represente le lien *->* "vote" entre Item et Profile
+class Vote(models.Model):
     item = models.ForeignKey('item', related_name='item_voter', on_delete=models.CASCADE, null=True)
     profile = models.ForeignKey('profile', related_name='profile_voter', on_delete=models.CASCADE, null=True)
     # nature du vote de l'utilisateur, si up=1 alors c'est un upvote, sinon c'est un downVote
@@ -54,8 +52,7 @@ class Voter(models.Model):
     def __str__(self):
         return self.item.__str__() + " " + self.profile.__str__() + " upvote : " +str(self.up)
 
-
-# représente le lien *->* "broughtBy" entre Item et Profile
+# represente le lien *->* "broughtBy" entre Item et Profile
 class Brought(models.Model):
     item = models.ForeignKey('item', related_name='item_brought', on_delete=models.CASCADE, null=True)
     profile = models.ForeignKey('profile', related_name='profile_brought', on_delete=models.CASCADE, null=True)

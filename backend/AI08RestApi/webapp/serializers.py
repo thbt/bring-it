@@ -23,8 +23,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):  # inherit from this class
-    #owner = serializers.ReadOnlyField(source='user.id')
-    ## owners = serializers.ReadOnlyField(source='owner')
     #event = serializers.ReadOnlyField(source='event.id')
     ##voters = UserSerializer(read_only=True, many=True)
 
@@ -34,3 +32,19 @@ class ItemSerializer(serializers.ModelSerializer):  # inherit from this class
     class Meta:
         model = Item
         fields = ("__all__")
+
+class VoteSerializer(serializers.ModelSerializer):
+    if (isinstance(serializers.ReadOnlyField(source='profile.id'), int)):
+        profile = serializers.ReadOnlyField(source='profile.id')
+
+    class Meta:
+        model = Vote
+        fields = ('__all__')
+
+class BroughtSerializer(serializers.ModelSerializer):
+    if (isinstance(serializers.ReadOnlyField(source='profile.id'), int)):
+        profile = serializers.ReadOnlyField(source='profile.id')
+
+    class Meta:
+        model = Brought
+        fields = ('__all__')

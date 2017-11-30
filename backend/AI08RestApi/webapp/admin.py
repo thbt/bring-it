@@ -24,6 +24,6 @@ class UserAdmin(BaseUserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
-admin.site.register(Voter)
+admin.site.register(Vote)
 admin.site.register(Brought)
 admin.site.register(Profile)

@@ -1,18 +1,3 @@
-"""AI08RestApi URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
 from django.conf.urls import url
 from django.contrib import admin
 from webapp import mouloud
@@ -20,6 +5,9 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from webapp import views
 from webapp.views.event import *
 from webapp.views.item import *
+from webapp.views.vote import *
+from webapp.views.brought import *
+
 
 from django.conf.urls import include
 
@@ -41,6 +29,14 @@ urlpatterns = [
     url(r'^eventItems/(?P<pEvent>[0-9]+)', views.event.ItemEventList.as_view()),
     url(r'^approvedEventItems/(?P<pEvent>[0-9]+)', views.event.ApprovedItemEventList.as_view()),
     url(r'^suggestedEventItems/(?P<pEvent>[0-9]+)', views.event.SuggestedItemEventList.as_view()),
+
+    url(r'^votes/(?P<pItem>[0-9]+)', views.vote.ItemVoteList.as_view()),
+    url(r'^votes/$', views.vote.VoteList.as_view()),
+    url(r'^vote/(?P<pk>[0-9]+)', views.vote.VoteDetails.as_view()),
+
+    url(r'^brings/(?P<pProfile>[0-9]+)', views.brought.ProfileBroughtList.as_view()),
+    url(r'^brings/$', views.brought.BroughtList.as_view()),
+    url(r'^bring/(?P<pk>[0-9]+)', views.brought.BroughtDetails.as_view()),
 ]
 
 urlpatterns += [
