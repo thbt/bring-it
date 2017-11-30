@@ -13,6 +13,7 @@ import { EventsPageModule } from '../pages/events/events.module';
 import { AddEventPageModule } from '../pages/add-event/add-event.module';
 import { LoginPageModule } from "../pages/login/login.module";
 import { HttpModule } from "@angular/http";
+import { RegisterPageModule } from "../pages/register/register.module";
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { HttpModule } from "@angular/http";
     AddEventPageModule,
     LoginPageModule,
     HttpModule,
+    RegisterPageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
