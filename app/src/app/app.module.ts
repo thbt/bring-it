@@ -11,6 +11,7 @@ import { WishlistPageModule } from "../pages/wishlist/wishlist.module";
 import { EventService } from '../providers/event/event.service';
 import { EventsPageModule } from '../pages/events/events.module';
 import { AddEventPageModule } from '../pages/add-event/add-event.module';
+import { LoginPageModule } from "../pages/login/login.module";
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { AddEventPageModule } from '../pages/add-event/add-event.module';
     IonicModule.forRoot(MyApp),
     WishlistPageModule,
     EventsPageModule,
-    AddEventPageModule
+    AddEventPageModule,
+    LoginPageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
