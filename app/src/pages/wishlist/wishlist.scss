@@ -1,3 +1,18 @@
+@import "../../theme/variables.scss";
+
 page-wishlist {
 
+
+  ion-footer {
+    background-color: map-get($colors, primary);
+    padding: 0.5rem;
+
+    ion-row {
+      border-radius: 0.5rem;
+      background-color: white;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
 }
+

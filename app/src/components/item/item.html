@@ -1,0 +1,27 @@
+<!-- Generated template for the ItemComponent component -->
+<ion-row nowrap>
+  <ion-col col-2 align-self-center>
+    <ion-icon class="item-icon" name="pint" item-start></ion-icon>
+  </ion-col>
+
+  <ion-col col-7 align-self-center>
+    {{item.name}} ({{item.broughtBy.length}}/{{item.quantity}})
+  </ion-col>
+
+  <ion-col col-3>
+    <ion-row nowrap text-center>
+      <ion-col>
+        <button ion-button icon-only round outline small (click)="onUpvoted.emit(item.id)">
+          <ion-icon name="thumbs-up"></ion-icon><br>
+        </button>
+        {{item.thumbsUp}}
+      </ion-col>
+      <ion-col>
+        <button ion-button icon-only round outline small (click)="onDownvoted.emit(item.id)">
+          <ion-icon name="thumbs-down"></ion-icon>
+        </button>
+        {{item.thumbsDown}}
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>

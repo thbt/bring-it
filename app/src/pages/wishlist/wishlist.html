@@ -5,14 +5,24 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>wishlist</ion-title>
   </ion-navbar>
-
 </ion-header>
-
-
 <ion-content padding>
-<items></items>
+
+  <h1>Just pick what you bring !</h1>
+  <ion-grid>
+      <item *ngFor="let item of mockBringitItems" [item]="item"></item>
+  </ion-grid>
+
 </ion-content>
+
+<ion-footer>
+  <ion-row class="add-input-wrapper">
+    <ion-input placeholder="Add an item"></ion-input>
+    <button ion-button icon-only small (click)="add()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-row>
+</ion-footer>

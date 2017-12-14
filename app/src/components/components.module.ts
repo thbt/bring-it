@@ -1,12 +1,16 @@
 import {NgModule} from '@angular/core';
-import {ItemsComponent} from './items/items';
 import {IonicPageModule} from "ionic-angular";
+import { ItemComponent } from './item/item';
 
 @NgModule({
-  declarations: [ItemsComponent],
-  imports: [IonicPageModule.forChild(ItemsComponent),
+  declarations: [
+    ItemComponent,
   ],
-  exports: [ItemsComponent]
+  imports: [IonicPageModule.forChild(ItemComponent),
+  ],
+  exports: [
+    ItemComponent,
+  ]
 })
 export class ComponentsModule {
 }
