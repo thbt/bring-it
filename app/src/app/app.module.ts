@@ -12,6 +12,7 @@ import { EventService } from '../providers/event/event.service';
 import { EventsPageModule } from '../pages/events/events.module';
 import { AddEventPageModule } from '../pages/add-event/add-event.module';
 import { LoginPageModule } from "../pages/login/login.module";
+import { HttpModule } from "@angular/http";
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { LoginPageModule } from "../pages/login/login.module";
     WishlistPageModule,
     EventsPageModule,
     AddEventPageModule,
-    LoginPageModule
+    LoginPageModule,
+    HttpModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
