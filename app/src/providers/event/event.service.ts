@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
-import {Http, RequestOptions, Response} from '@angular/http';
+import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
-import {BringItEvent} from "../../model/event.model";
-import {Observable} from "rxjs/Observable";
+import { BringItEventInterface } from "../../model/interfaces/event.model";
+import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/catch";
+import { HttpClient } from "@angular/common/http";
+import { BringItEvent } from "../../model/classes/event.class";
 
 /*
   Generated class for the EventProvider provider.
@@ -15,76 +16,79 @@ import "rxjs/add/operator/catch";
 export class EventService {
 
   //TODO insert constance in eventURL variable
-  private eventURL: string;
+  private eventURL: string = "http://localhost:3000/events";
+  private _currentEvent: BringItEvent = null;
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
   }
 
   /**
    * Method called to get event by id.
    * @param {string} id
-   * @returns {Observable<BringItEvent>}
+   * @returns {Observable<BringItEventInterface>}
    */
-  getEventById(id: string): Observable<BringItEvent> {
-    const url: string = `${this.eventURL}/${id}`;
+  getEventByUuid(uuid: string): Observable<BringItEventInterface> {
+    const url: string = `${this.eventURL}/${uuid}`;
     return this.http.get(url)
-      .map(res => res.json())
+      .map(res => res)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
   /**
    * Method made to create an event.
    * @param {Object} body
-   * @returns {Observable<BringItEvent>}
+   * @returns {Observable<BringItEventInterface>}
    */
-  postEvent(event: BringItEvent): Observable<BringItEvent> {
+  postEvent(event: BringItEventInterface): Observable<any> {
     const url: string = this.eventURL;
 
     // TODO check if headers are correct
-    let headers = new Headers({'Content-Type': 'application/json'});
+    //let headers = new Headers({'Content-Type': 'application/json'});
 
-    //TODO add options for post request
-    let options = new RequestOptions();
-
-    return this.http.post(url, event, options)
+    return this.http.post(url, event)
       .map((res: Response) => res.json())
   }
 
   /**
    * Method made  to update a created event.
    * @param {Object} body
-   * @returns {Observable<BringItEvent>}
+   * @returns {Observable<BringItEventInterface>}
    */
-  updateEvent(event: BringItEvent): Observable<BringItEvent> {
-    const url: string = `${this.eventURL}/${event.id}`;
+  updateEvent(event: BringItEventInterface): Observable<BringItEventInterface> {
+    const url: string = `${this.eventURL}/${event.uuid}`;
     // TODO check if headers are correct
     let headers = new Headers({'Content-Type': 'application/json'});
 
-    //TODO add options for post request
-    let options = new RequestOptions();
-    this.http.put(url, event, options)
-    return this.http.put(url, event, options)
-      .map((res: Response) => res.json())
+    this.http.put(url, event)
+    return this.http.put(url, event)
+      .map((res: Response) => res)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
 
   /**
    * Method made to delete a created event.
    * @param {Object} body
-   * @returns {Observable<BringItEvent>}
+   * @returns {Observable<BringItEventInterface>}
    */
-  deleteEvent(event: BringItEvent): Observable<BringItEvent> {
-    const url: string = `${this.eventURL}/${event.id}`;
+  deleteEvent(event: BringItEventInterface): Observable<BringItEventInterface> {
+    const url: string = `${this.eventURL}/${event.uuid}`;
 
     // TODO check if headers are correct
     let headers = new Headers({'Content-Type': 'application/json'});
 
-    //TODO add options for post request
-    let options = new RequestOptions();
 
     return this.http.delete(url)
-      .map((res: Response) => res.json())
+      .map((res: Response) => res)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
   }
+
+  get currentEvent(): BringItEvent {
+    return this._currentEvent;
+  }
+
+  set currentEvent(value: BringItEvent) {
+    this._currentEvent = value;
+  }
+
 
 }

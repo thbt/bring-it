@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { BringItEvent } from './../../model/event.model';
+import { BringItEventInterface } from '../../model/interfaces/event.model';
 
 /**
  * Generated class for the AddEventPage page.
@@ -17,19 +17,20 @@ import { BringItEvent } from './../../model/event.model';
 })
 export class AddEventPage {
   optionsCollapsed = true;
-  event: BringItEvent;
+  event: BringItEventInterface;
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     this.event = {
-      id: '-1',
+      uuid: '-1',
       title: '',
       type: '',
       isOver: false,
       hostId: '1',
-      guestsId: [],
+      //    guestsId: [],
       suggestions: [],
       items: [],
       date: null,
+      theme: '',
       location: '',
       description: ''
     };

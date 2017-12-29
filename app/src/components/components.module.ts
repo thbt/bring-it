@@ -1,12 +1,15 @@
 import {NgModule} from '@angular/core';
-import {ItemsComponent} from './items/items';
+import {ItemComponent} from './item/item';
 import {IonicPageModule} from "ionic-angular";
+import { AccountComponent } from './account/account';
 
 @NgModule({
-  declarations: [ItemsComponent],
-  imports: [IonicPageModule.forChild(ItemsComponent),
+  declarations: [ItemComponent,
+    AccountComponent],
+  imports: [IonicPageModule.forChild(ItemComponent),
   ],
-  exports: [ItemsComponent]
+  exports: [ItemComponent,
+    AccountComponent]
 })
 export class ComponentsModule {
 }
