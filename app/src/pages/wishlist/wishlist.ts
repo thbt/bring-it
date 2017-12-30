@@ -19,6 +19,8 @@ export class WishlistPage {
   // TODO Remove mock data
   mockBringitItems: BringItItem[] = [];
 
+  newItemName: string = null;
+
   constructor(public navCtrl: NavController, public navParams: NavParams, private eventService: EventService) {
     this.mockBringitItems.push({
       id: "0",
@@ -76,19 +78,34 @@ export class WishlistPage {
    * Method called when user clicks on the like button of an item.
    * TODO Implementation
    */
-  upvoteItem(index: number): void {
-
+  upvoteItem(itemId: string): void {
+    this.mockBringitItems.find(i => i.id === itemId).thumbsUp += 1;
   }
 
    /**
    * Method called when user clicks on the dislike button of an item.
    * TODO Implementation
    */
-  downvoteItem(index: number): void {
-
+  downvoteItem(itemId: string): void {
+    this.mockBringitItems.find(i => i.id === itemId).thumbsDown += 1;
   }
 
-  add() {
+  /**
+   *
+   * TODO use service
+   */
+  addItem() {
+    this.mockBringitItems.push({
+      id: this.mockBringitItems.length.toString(),
+      name: this.newItemName,
+      thumbsUp: 1,
+      thumbsDown: 0,
+      quantity: 1,
+      broughtBy: [],
+      voters: []
+    });
+
+    this.newItemName = null;
 
   }
 }
