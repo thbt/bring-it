@@ -7,15 +7,20 @@ from webapp.views.event import *
 from webapp.views.item import *
 from webapp.views.vote import *
 from webapp.views.brought import *
-
-
+from webapp.views.profile import *
+from rest_auth.serializers import UserDetailsSerializer
+import rest_auth.views
 from django.conf.urls import include
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # url(r'^items/$', views.ItemList.as_view()),
 
-    url(r'^users/', mouloud.UserListAPI.as_view()),
+    #url(r'^login/$', views.user.UserList.as_view()), ????
+
+    # liste des users
+    url(r'^users/$', views.profile.ProfileList.as_view()),
+    # un seul user en fonction de son id
+    url(r'^users/(?P<pk>[0-9]+)', views.profile.ProfileDetails.as_view()),
 
     url(r'^items/(?P<pEvent>[0-9]+)', views.item.EventItemList.as_view()),
     url(r'^items/$', views.item.ItemList.as_view()),
@@ -42,4 +47,5 @@ urlpatterns = [
 urlpatterns += [
     url(r'^api-auth/', include('rest_framework.urls',
                                namespace='rest_framework')),
+    url(r'^rest-auth/', include('rest_auth.urls'))
 ]

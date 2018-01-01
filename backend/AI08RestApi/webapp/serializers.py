@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import User
+from rest_auth.serializers import UserDetailsSerializer
 
 class EventSerializer(serializers.ModelSerializer):  # inherit from this class
     if(isinstance(serializers.ReadOnlyField(source='profile.id'), int) ):
@@ -13,13 +14,23 @@ class EventSerializer(serializers.ModelSerializer):  # inherit from this class
         fields = ('__all__')
 
 
-class UserSerializer(serializers.ModelSerializer):
-    items = serializers.PrimaryKeyRelatedField(many=True, queryset=Item.objects.all())
-    profilePicture = serializers.ImageField(source='profile.profilePicture')
+# class UserSerializer(serializers.ModelSerializer):
+#     items = serializers.PrimaryKeyRelatedField(many=True, queryset=Item.objects.all())
+#     profilePicture = serializers.ImageField(source='profile.profilePicture')
+#
+#     class Meta:
+#         model = User
+#         fields = ('id', 'username', 'items', 'profilePicture')
+
+class ProfileSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    username = serializers.CharField(source='user.username')
+    password = serializers.CharField(source='user.password')
+    profilePicture = serializers.ImageField()
 
     class Meta:
-        model = User
-        fields = ('id', 'username', 'items', 'profilePicture')
+        model = Profile
+        fields = ('id','username', 'password','profilePicture')
 
 
 class ItemSerializer(serializers.ModelSerializer):  # inherit from this class
@@ -31,7 +42,7 @@ class ItemSerializer(serializers.ModelSerializer):  # inherit from this class
 
     class Meta:
         model = Item
-        fields = ("__all__")
+        fields = ('__all__')
 
 class VoteSerializer(serializers.ModelSerializer):
     if (isinstance(serializers.ReadOnlyField(source='profile.id'), int)):
