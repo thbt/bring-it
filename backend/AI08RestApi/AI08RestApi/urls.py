@@ -28,9 +28,18 @@ urlpatterns = [
     url(r'^suggestedItems/$', views.item.SuggestedItemList.as_view()),
     url(r'^approvedItems/$', views.item.ApprovedItemList.as_view()),
 
-    url(r'^events/(?P<pUser>[0-9]+)', views.event.UserEventList.as_view()),
+    # les évenements d'un user
+    url(r'^events/search/(?P<pUser>[0-9]+)', views.event.UserEventList.as_view()),
+
+    # les évenements du user courant
+    url(r'^events/search/$', views.event.SelfEventList.as_view()),
+
+    # liste des events
     url(r'^events/$', views.event.EventList.as_view()),
-    url(r'^event/(?P<pk>[0-9]+)', views.event.EventDetails.as_view()),
+
+    # details sur l'event en paramètre
+    url(r'^events/(?P<pk>[0-9]+)', views.event.EventDetails.as_view()),
+
     url(r'^eventItems/(?P<pEvent>[0-9]+)', views.event.ItemEventList.as_view()),
     url(r'^approvedEventItems/(?P<pEvent>[0-9]+)', views.event.ApprovedItemEventList.as_view()),
     url(r'^suggestedEventItems/(?P<pEvent>[0-9]+)', views.event.SuggestedItemEventList.as_view()),

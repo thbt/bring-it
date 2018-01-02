@@ -16,6 +16,14 @@ class UserEventList(APIView):
         except Event.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+class SelfEventList(APIView):
+    def get(self, request):
+        try:
+            events = Event.objects.filter(host=self.request.user.profile)
+            serializer = EventSerializer(events, many=True)
+            return Response(serializer.data)
+        except Event.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 class EventDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()
