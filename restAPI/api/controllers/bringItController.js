@@ -14,7 +14,7 @@ var mongoose = require('mongoose'),
 exports.list_all_users = function (req, res) {
     User.find({}, function (err, user) {
         if (err)
-            res.send(err);
+            res.status(500).send(err);
         res.json(user);
     });
 };
@@ -27,7 +27,7 @@ exports.list_all_users = function (req, res) {
 exports.list_all_events = function (req, res) {
     AppEvent.find({}, function (err, event) {
         if (err)
-            res.send(err);
+            res.status(500).send(err);
         res.json(event);
     });
 };
@@ -43,7 +43,7 @@ exports.create_a_user = function (req, res) {
 
     new_user.save(function (err, user) {
         if (err)
-            res.send(err);
+            res.status(500).send(err);
         res.json(user);
     });
 };
@@ -57,7 +57,7 @@ exports.create_an_event = function (req, res) {
 
     new_event.save(function (err, event) {
         if (err)
-            res.send(err);
+            res.status(500).send(err);
         console.log('send response');
         console.log(event)
         res.send(event);
@@ -68,15 +68,17 @@ exports.login = function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
 
-    User.findOne().where('email').equals(email).exec(function (error, user) {
+    User.findOne().where('email').equals(email).exec((error, user) => {
+        if (error)
+            res.status(500).send(error);
         // test a matching password
-        user.comparePassword(password, function (errorInComparePassword, isMatch) {
-            if (errorInComparePassword) throw errorInComparePassword;
+        user.comparePassword(password, (errorInComparePassword, isMatch) => {
+            if (errorInComparePassword) 
+                res.status(500).send(errorInComparePassword);
+
             console.log(password, isMatch);
             //TODO Implement credentials
-            res.status(200).send({
-                message: 'Good Authentification'
-            })
+            res.status(200).send(user);
         });
     })
 }
@@ -89,7 +91,7 @@ exports.login = function (req, res) {
 exports.read_a_user = function (req, res) {
     BringItEvent.findOne().where('uuid').equals(req.params.uuid).exec(function (err, event) {
         if (err)
-            res.send(err);
+            res.status(500).send(err);
         res.send(event);
     });
 };
@@ -100,10 +102,9 @@ exports.read_a_user = function (req, res) {
  * @param res
  */
 exports.read_an_event = function (req, res) {
-
-    AppEvent.findOne().where('uuid').equals(req.params.uuid).exec(function (err, event) {
+    AppEvent.findOne().where('_id').equals(req.params.id).exec(function (err, event) {
         if (err)
-            res.send(err);
+            res.status(500).send(err);
         res.send(event);
     });
 };
@@ -114,10 +115,10 @@ exports.read_an_event = function (req, res) {
  * @param res
  */
 exports.update_a_user = function (req, res) {
-    User.findOneAndUpdate({uuid: req.params.uuid}, req.body, {new: true}, function (err, user) {
+    User.findOneAndUpdate({_id: req.params.id}, req.body, {new: true}, function (err, user) {
         if (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         }
         res.json(user);
     });
@@ -129,11 +130,12 @@ exports.update_a_user = function (req, res) {
  * @param res
  */
 exports.update_an_event = function (req, res) {
-    AppEvent.findOneAndUpdate({uuid: req.params.uuid}, req.body, {new: true}, function (err, event) {
+    AppEvent.findOneAndUpdate({_id: req.params.id}, req.body, {new: true}, (err, event) => {
         if (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         }
+        
         res.json(event);
     });
 };
@@ -148,7 +150,7 @@ exports.delete_a_user = function (req, res) {
         _id: req.params.uuid
     }, function (err, user) {
         if (err)
-            res.send(err);
+            res.status(500).send(err);
         res.json({message: 'User successfully deleted'});
     });
 };
@@ -163,16 +165,16 @@ exports.delete_an_event = function (req, res) {
         _id: req.params.uuid
     }, function (err, event) {
         if (err)
-            res.send(err);
+            res.status(500).send(err);
         res.json({message: 'Event successfully deleted'});
     });
 };
 
 exports.list_all_events_from_one_user = function (req, res) {
-    AppEvent.find().where('hostId').equals(req.query).exec(function (err, events) {
+    AppEvent.find().where('hostId').equals(req.params.id).exec(function (err, events) {
         if (err) {
             console.log(err);
-            res.send(err);
+            res.status(500).send(err);
         }
         res.send(events);
     })

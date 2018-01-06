@@ -4,25 +4,17 @@ var Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
-
 var UserSchema = new Schema({
-    uuid:{
+    email: {
         type: String,
-        required: 'Kindly enter the name of the task'
+        index: {unique: true}
     },
     nickname: {
         type: String,
-        required: 'Kindly enter the name of the task'
+        required: 'Nickname is required'
     },
     password: {
         type: String,
-        required: 'Kindly enter the password of the user',
-
-    },
-    email: {
-        type: String,
-        required: 'Kindly enter the email of the user',
-        index: {unique: true}
     },
     profilePicture: {
         type: String,
@@ -34,9 +26,7 @@ var UserSchema = new Schema({
         type: Date,
         default: Date.now
     }
-
 });
-
 
 /**
  * Function which runs before saving or updating new user

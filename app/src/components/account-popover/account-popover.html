@@ -1,0 +1,10 @@
+<ion-list *ngIf="!!connectedUser">
+  <ion-list-header>Hello, {{connectedUser?.nickname}}!</ion-list-header>
+  <button ion-item (click)="logout()">Sign Out</button>
+</ion-list>
+
+<ion-list *ngIf="!connectedUser">
+  <ion-list-header>You are not connected</ion-list-header>
+  <button ion-item (click)="login()">Sign In</button>
+  <button ion-item (click)="register()">Register</button>
+</ion-list>

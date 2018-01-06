@@ -1,65 +1,40 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { BringItEvent } from "../../model/classes/event.class";
+import { AlertController, IonicPage, NavController, ViewController } from 'ionic-angular';
 import { EventService } from "../../providers/event/event.service";
-import { UserService } from "../../providers/user/user.service";
+import { AuthenticationService } from "../../providers/auth/auth.service";
 import { User } from "../../model/classes/user.class";
-import { BringItEventInterface } from "../../model/interfaces/event.model";
-import { WishlistPage } from "../wishlist/wishlist";
-import { BringItItemInterface } from "../../model/interfaces/item.model";
-import { BringItItem } from "../../model/classes/item.class";
 
-interface Event {
-  title: string;
-  date: Date;
-}
+import { IBringItEvent } from '../../model/interfaces/event.model';
 
-/**
- * Generated class for the EventsPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
-@IonicPage()
+@IonicPage({
+  name: 'events',
+  segment: 'events',
+  defaultHistory: ['login']
+})
 @Component({
   selector: 'page-events',
   templateUrl: 'events.html',
 })
 export class EventsPage {
-  private events: BringItEvent[];
-  private connectedUser: User;
+  public events: IBringItEvent[];
 
-  constructor(private navCtrl: NavController,
-              private  navParams: NavParams,
-              private eventService: EventService,
-              private userService: UserService) {
+  constructor(
+    private viewCtrl: ViewController,
+    private navCtrl: NavController,
+    private eventService: EventService,
+    private authService: AuthenticationService,
+    private alertCtrl: AlertController
+  ) {
     this.events = [];
-    this.displayEvents();
+    this.viewCtrl.didEnter.subscribe(() => this.updateEvents());
+    this.authService.currentUser.subscribe(() => this.updateEvents());
   }
 
-  /**
-   * Method to display user events.
-   */
-  displayEvents() {
-    if (this.userService.connectedUser != null) {
-      this.eventService.getEventsByUserUuid(this.userService.connectedUser.uuid).subscribe(
-        response => {
-          let events: BringItEvent[] = [];
-          events = this.events;
-          console.log(response)
-          response.forEach(function (event) {
-            events.push(BringItEvent.fromBringItEventInterface(event));
-          });
-          this.events = events;
-        },
-        error => {
-          console.log(error);
-        },
-        () => {
-          console.log("User events are displayed")
-        }
-      )
+  updateEvents() {
+    if(this.authService.isUserRegistered()) {
+      this.eventService.getByUserId(this.authService.getCurrentUserValue()._id).subscribe(
+        res => this.events = res,
+        err => console.log(err));
     }
   }
 
@@ -67,8 +42,11 @@ export class EventsPage {
    * Action made when user clicks on an event
    * @param {BringItEvent} event
    */
-  onClickOnEventItem(event: BringItEvent) {
-    this.eventService.currentEvent = event;
-    this.navCtrl.push(WishlistPage);
+  selectEvent(event: IBringItEvent) {
+    this.navCtrl.push('event-page', { id: event._id });
+  }
+
+  newEvent() {
+    this.navCtrl.push('add-event');
   }
 }

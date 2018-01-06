@@ -1,87 +1,174 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { BringItItemInterface } from '../../model/interfaces/item.model';
+import { AlertController, IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+
+import { AuthenticationService } from '../../providers/auth/auth.service';
 import { EventService } from '../../providers/event/event.service';
-import { UserInterface } from "../../model/interfaces/user.model";
-import { UserService } from "../../providers/user/user.service";
+
+import { IBringItEvent } from '../../model/interfaces/event.model';
+import { IUser } from '../../model/interfaces/user.model';
 import { BringItItem } from "../../model/classes/item.class";
+
 import { SocialSharing } from '@ionic-native/social-sharing';
-import { User } from "../../model/classes/user.class";
 import { EventsPage } from "../events/events";
 
-/**
- * Generated class for the WishlistPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
-@IonicPage()
+@IonicPage({
+  name: 'event-page',
+  segment: 'events/:id',
+  defaultHistory: ['select-guest']
+})
 @Component({
   selector: 'page-wishlist',
   templateUrl: 'wishlist.html',
 })
 export class WishlistPage {
-  newItemName: string = '';
-  suggestions: BringItItem[];
-  items: BringItItem[];
-  connectedUser: User;
-  isUserEventOwner: boolean;
+  loading = true;
+  event: IBringItEvent;
+  newItemName = '';
+  currentUser: IUser | null;
+  suggestions = Array<BringItItem>();
+  items = Array<BringItItem>();
 
+  collapseSuggestions: boolean = false;
 
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private eventService: EventService,
-              private userService: UserService,
-              private socialSharing: SocialSharing) {
-    this.connectedUser = new User('');
-    this.items = [];
-    this.suggestions = [];
-    if (this.eventService.currentEvent != null) {
-      this.suggestions = this.eventService.currentEvent.suggestions;
-      this.items = this.eventService.currentEvent.items;
-    }
-    if (this.userService.connectedUser != null) {
-      this.connectedUser = this.userService.connectedUser;
-      if (this.userService.connectedUser.uuid == this.eventService.currentEvent.hostId) this.isUserEventOwner = true;
-
+  constructor(
+    private navCtrl: NavController,
+    private navParams: NavParams,
+    private viewCtrl: ViewController,
+    private eventService: EventService,
+    private authService: AuthenticationService,
+    private socialSharing: SocialSharing,
+    private alertCtrl: AlertController
+  ) {
+    if (!this.navParams.get('id')) {
+      console.log('eventId was not sent, popping the view.');
+      this.navCtrl.pop();
     }
 
-    //If the wishlist is empty, automatically provides one item to the list
-    if (this.items.length == 0) this.items.push(new BringItItem("Pain"));
+    this.viewCtrl.didEnter.subscribe(() =>
+      this.eventService.getById(this.navParams.get('id')).subscribe(
+        res => {
+          this.event = res;
 
+          this.authService.retrieveUserFromStorage()
+            .then(user => {
+              if(!!user) {
+                // user in local storage, verify it is linked to an event guest
+                if (this.event.guests.findIndex(g => g.userId === user._id) < 0)
+                  this.navCtrl.push('select-guest', {id: this.navParams.get('id')});
+                else
+                  this.loading = false;
+              } else if (!!this.authService.getCurrentUserValue() &&
+                         this.event.guests.findIndex(g => g.name === this.authService.getCurrentUserValue().nickname) > -1) {
+                // unauthentified user in memory linked to event's guest
+                this.loading = false;
+              } else {
+                // no user in local storage or in memory
+                this.navCtrl.push('select-guest', {id: this.navParams.get('id')});
+              }
+            }).catch((err) => {
+              console.log(err);
+              // couldn't retrieve user; so let's check memory
+              // unauthentified user in memory linked to event's guest
+              if (this.event.guests.findIndex(g => g.name === this.authService.getCurrentUserValue().nickname) > -1)
+                this.loading = false;
+            });
+        },
+        err => console.log(err)));
 
+    this.authService.currentUser.subscribe(
+      user => this.currentUser = user,
+      err => console.log(err));
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad WishlistPage');
-  }
 
   /**
    * Method called when the user clicks on the "+" button.
    * It adds a new item on the list.
    */
-  onAddNewItem() {
+  addItem() {
+    let newItem = new BringItItem(this.newItemName);
+    newItem.suggestedBy = this.currentUser.nickname;
+    newItem.upvoters.push(this.currentUser.nickname);
+
     // If the new item is not added by the creator of the event, then it goes in the suggestion list
-    if (this.eventService.currentEvent.hostId != this.userService.connectedUser.uuid) {
-      this.suggestions.push(new BringItItem(this.newItemName))
+    if (this.currentUser && this.event.hostId != this.currentUser._id) {
+      this.event.suggestions.push(newItem.toBringItItemInterface());
+      this.updateEvent();
+    } else {
+      this.event.items.push(newItem.toBringItItemInterface());
       this.updateEvent();
     }
-    // Otherwise, it goes in the official item list
-    else if (this.eventService.currentEvent.hostId == this.userService.connectedUser.uuid) {
-      this.items.push(new BringItItem(this.newItemName));
-      this.updateEvent();
+  }
+
+  upvoteItem(itemIndex: number, isSuggestion: boolean) {
+    let item = isSuggestion ? this.event.suggestions[itemIndex] : this.event.items[itemIndex];
+
+    if(item.upvoters.indexOf(this.currentUser.nickname) > -1)
+      item.upvoters = item.upvoters.filter(i => i !== this.currentUser.nickname);
+    else
+      item.upvoters.push(this.currentUser.nickname);
+
+    item.downvoters = item.downvoters.filter(i => i !== this.currentUser.nickname);
+
+    if (isSuggestion)
+      this.event.suggestions[itemIndex] = item;
+    else
+      this.event.items[itemIndex] = item;
+
+    this.updateEvent();
+  }
+
+  downvoteItem(itemIndex: number, isSuggestion: boolean) {
+    let item = isSuggestion ? this.event.suggestions[itemIndex] : this.event.items[itemIndex];
+
+    if(item.downvoters.indexOf(this.currentUser.nickname) > -1)
+      item.downvoters = item.downvoters.filter(i => i !== this.currentUser.nickname);
+    else
+      item.downvoters.push(this.currentUser.nickname);
+
+    item.upvoters = item.upvoters.filter(i => i !== this.currentUser.nickname);
+
+    if (isSuggestion)
+      this.event.suggestions[itemIndex] = item;
+    else
+      this.event.items[itemIndex] = item;
+
+    this.updateEvent();
+  }
+
+  selectSuggestion(itemIndex: number) {
+    let item = this.event.suggestions[itemIndex];
+
+    if(this.currentUser && this.currentUser._id == this.event.hostId) {
+      this.event.items.push(item);
+      this.event.suggestions.splice(itemIndex, 1);
     }
+
+    this.updateEvent();
+  }
+
+  selectItem(itemIndex: number) { // TODO fix issue ?
+    let item = this.event.items[itemIndex];
+
+    if(item.broughtBy.indexOf(this.currentUser.nickname) > -1) {
+      item.broughtBy = item.broughtBy.filter(i => i !== this.currentUser.nickname);
+    } else {
+      item.broughtBy.push(this.currentUser.nickname);
+    }
+
+    this.updateEvent();
   }
 
   /**
    * Method called when the user clicks on the "share" button to share his event
    */
-  onShareEvent() {
+  shareEvent() {
     // Check if sharing via email is supported
     this.socialSharing.share(this.eventService.sharedURL).then(() => {
+      console.log('todo');
       // Sharing via email is possible
     }).catch(() => {
+      console.log('todo');
       // Sharing via email is not possible
     });
   }
@@ -89,29 +176,19 @@ export class WishlistPage {
   /**
    * Method called when the user clicks on the home button to go on the events page
    */
-  onGoToEventsPage() {
-    this.navCtrl.push(EventsPage);
+  goToHome() {
+    this.navCtrl.push('events');
+    this.navCtrl.setRoot(EventsPage);
   }
 
   /**
    * Method called each time an element is modified on the event
    */
   updateEvent() {
-    if (this.eventService.currentEvent != null) {
-      this.eventService.currentEvent.suggestions = this.suggestions;
-      this.eventService.currentEvent.items = this.items;
-      this.eventService.updateEvent(this.eventService.currentEvent.toBringItEventInterface()).subscribe(
-        response => {
-          console.log("Event has been updated");
-        }
-      ),
-        error => {
-          console.log(error);
-        },
-        () => {
-
-        }
+    if (this.event) {
+      this.eventService.put(this.event).subscribe(
+        res => this.event = res,
+        err => console.log(err));
     }
-
   }
 }

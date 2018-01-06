@@ -1,7 +1,7 @@
 <!-- Generated template for the ItemComponent component -->
 <ion-row nowrap>
   <ion-col col-1 align-self-center>
-    <ion-checkbox [(ngModel)]="selected" click="onSelectItem()"></ion-checkbox>
+    <ion-checkbox [checked]="isSelected" (click)="onSelect.emit()"></ion-checkbox>
   </ion-col>
 
   <ion-col col-8 align-self-center>
@@ -11,17 +11,17 @@
   <ion-col col-3>
     <ion-row nowrap text-center>
       <ion-col>
-        <button ion-button icon-only round outline small (click)="upvote()">
+        <button ion-button icon-only round outline small (click)="onUpvote.emit()">
           <ion-icon name="thumbs-up"></ion-icon>
           <br>
         </button>
-        {{item.thumbsUp}}
+        {{item.upvoters.length}}
       </ion-col>
       <ion-col>
-        <button ion-button icon-only round outline small (click)="downvote()">
+        <button ion-button icon-only round outline small (click)="onDownvote.emit()">
           <ion-icon name="thumbs-down"></ion-icon>
         </button>
-        {{item.thumbsDown}}
+        {{item.downvoters.length}}
       </ion-col>
     </ion-row>
   </ion-col>

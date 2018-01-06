@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/map';
-import { Observable } from "rxjs/Observable";
-import { AuthUserInterface } from "../../model/interfaces/auth-user.model";
-import "rxjs/add/operator/catch";
 import { HttpClient } from "@angular/common/http";
-import { UserInterface } from "../../model/interfaces/user.model";
-import { User } from "../../model/classes/user.class";
+import { AuthUserInterface } from "../../model/interfaces/auth-user.model";
 
 /*
   Generated class for the UserProvider provider.
@@ -15,57 +10,40 @@ import { User } from "../../model/classes/user.class";
 */
 @Injectable()
 export class UserService {
-
   private loginURL: string = "http://localhost:3000/login"
   private userURL: string = "http://localhost:3000/users";
-  private _connectedUser: User = null;
 
-  constructor(public http: HttpClient) {
-  }
-
-  /**
-   * Method called to get an user by id.
-   * @param {string} id
-   * @returns {Observable<AuthUserInterface>}
-   */
-  getUserById(id: string): Observable<AuthUserInterface> {
-    const url: string = `${this.userURL}/${id}`;
-
-    //TODO add options for get request
-
-    return this.http.get(url)
-      .map(res => res)
-      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
-  }
-
-  /**
-   * Method called to get an user by id.
-   * @param {string} id
-   * @returns {Observable<AuthUserInterface>}
-   */
-  getUserByEmailAndPassword(email: string, password: string): Observable<AuthUserInterface> {
-    const url: string = this.loginURL;
-    const message = {email: email, password: password};
-
-
-    return this.http.post(url, message)
-      .map(res => res)
-      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
-  }
+  constructor(public http: HttpClient) {}
 
   /**
    * Method made to create an user.
    * @param {Object} body
    * @returns {Observable<AuthUserInterface>}
    */
-  postUser(user: AuthUserInterface): Observable<any> {
-    const url: string = this.userURL;
+  post(user: AuthUserInterface) {
+    return this.http.post(this.userURL, user);
+  }
 
-    // TODO check if headers are correct
-    let headers = new Headers({'Content-Type': 'application/json'});
 
-    return this.http.post(url, user)
-      .map((res: Response) => res)
+  /**
+   * Method called to get an user by id.
+   * @param {string} id
+   * @returns {Observable<AuthUserInterface>}
+   */
+  getById(id: string) {
+    return this.http.get<AuthUserInterface>(`${this.userURL}/${id}`);
+  }
+
+  /**
+   * Method called to get an user by id.
+   * @param {string} id
+   * @returns {Observable<AuthUserInterface>}
+   */
+  getUserByEmailAndPassword(email: string, password: string) {
+    const url: string = this.loginURL;
+    const message = {email: email, password: password};
+
+    return this.http.post<AuthUserInterface>(url, message);
   }
 
   /**
@@ -73,15 +51,11 @@ export class UserService {
    * @param {Object} body
    * @returns {Observable<AuthUserInterface>}
    */
-  updateUser(user: AuthUserInterface): Observable<AuthUserInterface> {
-    const url: string = `${this.userURL}/${user.uuid}`;
-    // TODO check if headers are correct
-    let headers = new Headers({'Content-Type': 'application/json'});
+  updateUser(user: AuthUserInterface) {
+    const url: string = `${this.userURL}/${user._id}`;
 
     this.http.put(url, user)
-    return this.http.put(url, user)
-      .map((res: Response) => res.json())
-      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+    return this.http.put<AuthUserInterface>(url, user);
   }
 
   /**
@@ -89,24 +63,9 @@ export class UserService {
    * @param {Object} body
    * @returns {Observable<AuthUserInterface>}
    */
-  deleteUser(user: AuthUserInterface): Observable<AuthUserInterface> {
-    const url: string = `${this.userURL}/${user.uuid}`;
+  deleteUser(user: AuthUserInterface) {
+    const url: string = `${this.userURL}/${user._id}`;
 
-    // TODO check if headers are correct
-    let headers = new Headers({'Content-Type': 'application/json'});
-
-
-    return this.http.delete(url)
-      .map((res: Response) => res.json())
-      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+    return this.http.delete<AuthUserInterface>(url);
   }
-
-  get connectedUser(): User {
-    return this._connectedUser;
-  }
-
-  set connectedUser(value: User) {
-    this._connectedUser = value;
-  }
-
 }

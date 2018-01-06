@@ -2,15 +2,17 @@
   <ion-navbar color="primary">
     <ion-title>Bring It!</ion-title>
     <ion-buttons end>
+      <account></account>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content text-center>
-  <button ion-button color="secondary">New event</button>
+<ion-content padding text-center>
+  <button ion-button color="secondary" (click)="newEvent()">New event</button>
+
   <p *ngIf="!events || events.length == 0">You don't have any upcoming events... :(</p>
   <ion-list>
-    <button ion-item *ngFor="let event of events" (click)="onClickOnEventItem(event)">
+    <button ion-item *ngFor="let event of events" (click)="selectEvent(event)">
       <h2>{{event.title}}</h2>
       <p>{{event.date | date:'dd/MM/yy'}}</p>
     </button>

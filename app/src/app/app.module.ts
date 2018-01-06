@@ -1,8 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-import { SplashScreen } from '@ionic-native/splash-screen';
+import { IonicStorageModule } from '@ionic/storage';
 import { StatusBar } from '@ionic-native/status-bar';
+import { SplashScreen } from '@ionic-native/splash-screen';
+
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { UserService } from '../providers/user/user.service';
@@ -14,6 +16,7 @@ import { LoginPageModule } from "../pages/login/login.module";
 import { RegisterPageModule } from "../pages/register/register.module";
 import { HttpClientModule } from "@angular/common/http";
 import { SocialSharing } from '@ionic-native/social-sharing';
+import { AuthenticationService } from '../providers/auth/auth.service';
 
 
 @NgModule({
@@ -24,6 +27,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot(),
     WishlistPageModule,
     EventsPageModule,
     AddEventPageModule,
@@ -42,6 +46,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UserService,
     EventService,
+    AuthenticationService,
     SocialSharing,
   ]
 })

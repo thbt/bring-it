@@ -1,18 +1,15 @@
 import { AuthUserInterface } from "../interfaces/auth-user.model";
-import { UUID } from "angular2-uuid";
 import { User } from "./user.class";
 
 export class AuthUser implements AuthUserInterface {
-
+  private __id: string;
   private _email: string;
   private _profilePicture: string;
   private _password: string;
-  private _uuid: string;
   private _nickname: string;
   private _credentials: string;
 
   constructor(nickname: string, email: string, password: string, credentials: string = '', profilePicture: string = '') {
-    this.uuid = UUID.UUID();
     this.email = email;
     this.password = password;
     this.nickname = nickname;
@@ -21,8 +18,7 @@ export class AuthUser implements AuthUserInterface {
   }
 
   toUser(): User {
-    let user = new User("");
-    user.uuid = this.uuid;
+    let user = new User('', '');
     user.email = this.email;
     user.nickname = this.nickname;
     user.profilePicture = this.profilePicture;
@@ -32,7 +28,7 @@ export class AuthUser implements AuthUserInterface {
 
   toAuthUserInterface(): AuthUserInterface {
     return {
-      uuid: this.uuid,
+      _id: this.__id,
       nickname: this.nickname,
       email: this.email,
       password: this._password,
@@ -45,7 +41,7 @@ export class AuthUser implements AuthUserInterface {
     let authUser = new AuthUser('', '', '');
     authUser.email = authUserI.email;
     authUser.nickname = authUserI.nickname;
-    authUser.uuid = authUserI.uuid;
+    authUser.id = authUserI._id;
     authUser.password = authUserI.password;
     authUser.credentials = authUserI.credentials;
     authUser.profilePicture = authUserI.profilePicture;
@@ -78,12 +74,12 @@ export class AuthUser implements AuthUserInterface {
     this._password = value;
   }
 
-  get uuid(): string {
-    return this._uuid;
+  get id(): string {
+    return this.__id;
   }
 
-  set uuid(value: string) {
-    this._uuid = value;
+  set id(value: string) {
+    this.__id = value;
   }
 
   get nickname(): string {

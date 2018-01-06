@@ -6,11 +6,6 @@ const SALT_WORK_FACTOR = 10;
 
 
 var EventSchema = new Schema({
-
-    uuid:{
-        type:String,
-        required : 'Kindly enter the uuid of the event'
-    },
     title: {
         type: String,
         required: 'Kindly enter the name of the event'
@@ -18,32 +13,48 @@ var EventSchema = new Schema({
     type: {
         type: String,
         required: 'Kindly enter the type of the event',
-
-    },
-    isOver: {
-        type: Boolean,
     },
     hostId: {
         type: String,
     },
-    //guestsId could be made from people who are not save in databases.
-    guestsId: {
-        type: [String],
+    isOver: {
+        type: Boolean,
     },
-
-    suggestions: {
-        type: [String],
-    },
-    items: [{
-        uuid: String,
+    guests: [{
+        name: {
+            type: String,
+            required: 'Guest name is mandatory'
+        },
+        userId: String,
+    }],
+    suggestions: [{
         name: String,
-        thumbsUp: Number,
-        thumbsDown: Number,
         quantity: Number,
         broughtBy: {
             type: [String],
         },
-        voters: {
+        upvoters: {
+            type: [String]
+        },
+        downvoters: {
+            type: [String]
+        },
+        picture: String,
+        details: String,
+        suggestedBy: {
+            type: String
+        }
+    }],
+    items: [{
+        name: String,
+        quantity: Number,
+        broughtBy: {
+            type: [String],
+        },
+        upvoters: {
+            type: [String]
+        },
+        downvoters: {
             type: [String]
         },
         picture: String,
@@ -68,7 +79,6 @@ var EventSchema = new Schema({
         type: Date,
         default: Date.now
     }
-
 });
 
 

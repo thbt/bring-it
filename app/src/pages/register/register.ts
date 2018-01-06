@@ -1,77 +1,79 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { matchOtherValidator } from "./match-other-validator";
-import { UserService } from "../../providers/user/user.service";
-import { AuthUserInterface } from "../../model/interfaces/auth-user.model";
-import { WishlistPage } from "../wishlist/wishlist";
-import { AuthUser } from "../../model/classes/auth-user.class";
-import { User } from "../../model/classes/user.class";
-import { AddEventPage } from "../add-event/add-event";
-/**
- * Generated class for the RegisterPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { IonicPage, NavController } from 'ionic-angular';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from "@angular/forms";
 
-@IonicPage()
+import { UserService } from "../../providers/user/user.service";
+import { AuthenticationService } from '../../providers/auth/auth.service';
+
+import { AuthUserInterface } from "../../model/interfaces/auth-user.model";
+
+
+@IonicPage({
+  name: 'register'
+})
 @Component({
   selector: 'page-register',
   templateUrl: 'register.html',
 })
 export class RegisterPage {
-  inputEmail: string;
-  inputPassword: string;
-  inputConfirmationPassword: string;
-  inputNickname: string;
   registerForm: FormGroup;
 
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private formBuilder: FormBuilder,
-              private userService: UserService) {
+  constructor(
+    private navCtrl: NavController,
+    private formBuilder: FormBuilder,
+    private userService: UserService,
+    private authService: AuthenticationService
+  ) {
     this.registerForm = this.formBuilder.group({
       email: ['', Validators.compose([Validators.email, Validators.required])],
-      nickname: ['', Validators.compose([Validators.required])],
-      password: ['', Validators.compose([Validators.required])],
-      confirmation_password: ['', [
-        Validators.required,
-        matchOtherValidator('password')
-      ]]
+      nickname: ['', Validators.required],
+      passwords: formBuilder.group({
+        password: ['', Validators.required],
+        confirm: ['', Validators.required]
+      }, { validator: this.areEqual })
+    });
 
-    })
-    ;
+    console.log(this.registerForm.get('passwords.password'));
+  }
+
+  areEqual(c: AbstractControl): ValidationErrors | null {
+    const keys: string[] = Object.keys(c.value);
+    for (const i in keys) {
+      if (i !== '0' && c.value[keys[+i - 1]] !== c.value[keys[i]]) {
+        return { areEqual: true };
+      }
+    }
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad RegisterPage');
   }
 
-  /**
-   * Method called when user clicks on the confirm button to set up his account
-   */
-  createAccount() {
-    const userI: AuthUserInterface = {
-      uuid: '',
-      nickname: this.inputNickname,
-      email: this.inputEmail,
+  register() {
+    const newUser: AuthUserInterface = {
+      nickname: this.registerForm.controls.nickname.value,
+      email: this.registerForm.controls.email.value,
       profilePicture: '',
-      password: this.inputConfirmationPassword,
+      password: this.registerForm.get('passwords.password').value,
       credentials: ''
     }
-    this.userService.postUser(userI).subscribe(response => {
 
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        console.log("User has been created")
-        const user = new User(userI.nickname, userI.email);
-        this.userService.connectedUser = user;
-        this.navCtrl.push(AddEventPage);
-      })
+    this.userService.post(newUser).subscribe(
+      response => this.authService.login(newUser.email, newUser.password).subscribe(res => this.navCtrl.popToRoot()),
+      (err: HttpErrorResponse) => {
+        if (err.error instanceof Error) {
+          // A client-side or network error occurred. Handle it accordingly.
+          console.log('An error occurred:', err.error.message);
+        } else {
+          // The backend returned an unsuccessful response code.
+          console.log(`Backend returned code ${err.status}, body was:`);
+          console.log(JSON.parse(err.error));
+        }
+      });
   }
 
+  facebookAuth() {
+    console.log('TODO');
+  }
 }

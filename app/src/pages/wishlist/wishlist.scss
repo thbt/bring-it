@@ -1,7 +1,19 @@
-page-wishlist {
-
-}
-
 .items-bar{
   display: flex;
+}
+
+ion-footer {
+  background: color($colors, primary);
+  padding: 5px;
+  ion-row {
+    background: white;
+    border-radius: 5px;
+    padding: 3px;
+  }
+}
+
+.middle {
+  height: 100%;
+  display: block;
+  vertical-align: middle;
 }

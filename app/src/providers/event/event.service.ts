@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
-import { BringItEventInterface } from "../../model/interfaces/event.model";
+import { IBringItEvent } from "../../model/interfaces/event.model";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/catch";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { BringItEvent } from "../../model/classes/event.class";
-import { RequestOptions } from "@angular/http";
-import { map } from "rxjs/operator/map";
 
 /*
   Generated class for the EventProvider provider.
@@ -30,54 +28,39 @@ export class EventService {
   }
 
   /**
-   * Method called to get event by uuid.
+   * Method called to get event by id.
    * @param {string} id
-   * @returns {Observable<BringItEventInterface>}
+   * @returns {Observable<IBringItEvent>}
    */
-  getEventByUuid(uuid: string): Observable<BringItEventInterface> {
-    const url: string = `${this._eventURL}/${uuid}`;
-    return this.http.get(url)
-      .map(res => res)
-      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+  getById(id: string) {
+    return this.http.get<IBringItEvent>(this._eventURL + '/' + id);
   }
 
   /**
    * Method called to get event by user uuid.
    * @param {string} id
-   * @returns {Observable<BringItEventInterface>}
+   * @returns {Observable<IBringItEvent>}
    */
-  getEventsByUserUuid(userUuid: string): Observable<BringItEventInterface[]> {
-    const url: string = this._eventURL + '/search';
-    return this.http.get(url, {
-      params: new HttpParams().set('hostId', userUuid)
-    })
-      .map(res => res)
-      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+  getByUserId(userId: string) {
+    return this.http.get<IBringItEvent[]>('http://localhost:3000/users/' + userId + '/events');
   }
 
   /**
    * Method made to create an event.
    * @param {Object} body
-   * @returns {Observable<BringItEventInterface>}
+   * @returns {Observable<IBringItEvent>}
    */
-  postEvent(event: BringItEventInterface): Observable<any> {
-    const url: string = this._eventURL;
-
-    return this.http.post(url, event)
-      .map((res: Response) => res)
+  post(event: IBringItEvent) {
+    return this.http.post<IBringItEvent>(this._eventURL, event);
   }
 
   /**
    * Method made  to update a created event.
    * @param {Object} body
-   * @returns {Observable<BringItEventInterface>}
+   * @returns {Observable<IBringItEvent>}
    */
-  updateEvent(event: BringItEventInterface): Observable<BringItEventInterface> {
-    const url: string = `${this._eventURL}/${event.uuid}`;
-    this.http.put(url, event)
-    return this.http.put(url, event)
-      .map((res: Response) => res)
-      .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+  put(event: IBringItEvent) {
+    return this.http.put<IBringItEvent>(this._eventURL + '/' + event._id, event);
   }
 
   /**
@@ -85,8 +68,8 @@ export class EventService {
    * @param {Object} body
    * @returns {Observable<BringItEventInterface>}
    */
-  deleteEvent(event: BringItEventInterface): Observable<BringItEventInterface> {
-    const url: string = `${this._eventURL}/${event.uuid}`;
+  deleteEvent(event: IBringItEvent): Observable<IBringItEvent> {
+    const url: string = `${this._eventURL}/${event._id}`;
     return this.http.delete(url)
       .map((res: Response) => res)
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'));

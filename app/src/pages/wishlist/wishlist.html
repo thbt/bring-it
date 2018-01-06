@@ -1,64 +1,46 @@
-<!--
-  Generated template for the WishlistPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-buttons start>
-      <button ion-button icon-only (click)="onGoToEventsPage()">
+      <button ion-button icon-only (click)="goToHome()">
         <ion-icon name="home"></ion-icon>
       </button>
     </ion-buttons>
     <ion-title>Wishlist</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only (click)="onShareEvent()">
+      <button ion-button icon-only (click)="shareEvent()">
         <ion-icon name="share-alt"></ion-icon>
       </button>
-      <div *ngIf="isUserEventOwner">
-        <account></account>
-      </div>
+      <account></account>
     </ion-buttons>
   </ion-navbar>
-
 </ion-header>
 
 <ion-content padding>
-
-  <button ion-button clear (click)="itemsCollapsed = !itemsCollapsed">
-    Wished items &nbsp;
-    <ion-icon [name]="itemsCollapsed ? 'arrow-dropdown' : 'arrow-dropup'"></ion-icon>
-  </button>
-  <div *ngIf="!itemsCollapsed">
+  <ng-container *ngIf="!loading">
     <ion-grid>
-      <item *ngFor="let item of items" [item]="item"
-            [connectedUser]="connectedUser"></item>
+      <item *ngFor="let item of event?.items; let i = index" [item]="item" [isSelected]="item.broughtBy.indexOf(currentUser?.nickname) > -1"
+        (onUpvote)="upvoteItem(i)" (onDownvote)="downvoteItem(i, false)" (onSelect)="selectItem(i, false)"></item>
     </ion-grid>
-  </div>
 
-  <br>
-
-  <button ion-button clear (click)="suggestionsCollapsed = !suggestionsCollapsed">
-    Suggestions &nbsp;
-    <ion-icon [name]="suggestionsCollapsed? 'arrow-dropdown' : 'arrow-dropup'"></ion-icon>
-  </button>
-  <div *ngIf="!suggestionsCollapsed">
-    <ion-grid>
-      <item *ngFor="let suggestion of suggestions" [item]="suggestion"
-            [connectedUser]="connectedUser"></item>
+    <button ion-button clear (click)="suggestionsCollapsed = !suggestionsCollapsed">
+      Suggestions &nbsp;
+      <ion-icon [name]="collapseSuggestions ? 'arrow-dropdown' : 'arrow-dropup'"></ion-icon>
+    </button>
+    <ion-grid *ngIf="!collapseSuggestions">
+      <item *ngFor="let item of event?.suggestions; let i = index" [item]="item" (onUpvote)="upvoteItem(i, true)" (onDownvote)="downvoteItem(i, true)" (onSelect)="selectSuggestion(i)"></item>
     </ion-grid>
-  </div>
+  </ng-container>
+  <ng-container *ngIf="loading">
+    loading...
+  </ng-container>
+
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar>
-    <div class="items-bar">
-      <ion-input type="text" [(ngModel)]="newItemName" placeholder="Type new item" clearInput="true" maxlength="20">
-      </ion-input>
-      <button [disabled]="newItemName.length==0" (click)="onAddNewItem()" ion-button>
-        <ion-icon name="add"></ion-icon>
-      </button>
-    </div>
-  </ion-toolbar>
+  <ion-row class="add-input-wrapper">
+    <ion-input [(ngModel)]="newItemName" placeholder="Add an item" clearInput="true" ></ion-input>
+    <button ion-button icon-only small [disabled]="newItemName.length==0" (click)="addItem()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-row>
 </ion-footer>

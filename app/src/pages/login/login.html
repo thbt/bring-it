@@ -1,65 +1,41 @@
-<!--
-  Generated template for the LoginPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>login-page</ion-title>
+  <ion-navbar color="primary">
+    <ion-title>Login</ion-title>
   </ion-navbar>
-
 </ion-header>
 
+<ion-content text-center padding>
+  <form [formGroup]="loginForm" (ngSubmit)="loginForm.valid && login()" center>
+    <ion-list>
+      <ion-list-header no-lines>
+        Enter your credentials
+      </ion-list-header>
+      <ion-item>
+        <ion-label floating>Email</ion-label>
+        <ion-input type="text" formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="!loginForm.get('email').valid && loginForm.get('email').dirty" no-lines>
+        <div class="error-message">Please enter a valid email address !</div>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Password</ion-label>
+        <ion-input type="password" formControlName="password"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="!loginForm.get('password').valid && loginForm.get('password').dirty" no-lines>
+        <div class="error-message">Please enter your password !</div>
+      </ion-item>
+      <ion-item *ngIf="!!errorMessage" class="danger">
+        <!-- TODO style -->
+        {{errorMessage}}
+      </ion-item>
+    </ion-list>
+    <button class="custom-button" ion-button type="submit">Sign in</button>
+  </form>
 
-<ion-content padding>
-  <div padding>
-    <form [formGroup]="loginForm"  (ngSubmit)="onSubmit()" center>
-      <ion-list>
-        <ion-item no-lines>
-          <h1>Open your account !</h1>
-        </ion-item>
-        <ion-item>
-          <ion-label floating>Email address</ion-label>
-          <ion-input type="text" [(ngModel)]="inputEmail"  formControlName="email"></ion-input>
-        </ion-item>
-        <ion-item *ngIf="!loginForm.controls.email.valid  && (loginForm.controls.email.dirty)" no-lines>
-          <div class="error-message">Please enter a valid email address !</div>
-        </ion-item>
-        <ion-item>
-          <ion-label floating>Password</ion-label>
-          <ion-input type="password" [(ngModel)]="inputPassword" formControlName="password"></ion-input>
-        </ion-item>
-        <ion-item *ngIf="!loginForm.controls.password.valid  && (loginForm.controls.password.dirty)" no-lines>
-          <div class="error-message">Please enter your password !</div>
-        </ion-item>
-        <ion-item>
-
-          <div *ngIf="errorMessage != ''"
-               class="alert alert-danger" padding>
-
-            <div style="color:#ff0033" *ngIf="errorMessage != ''">
-              {{errorMessage}}
-            </div>
-          </div>
-        </ion-item>
-      </ion-list>
-      <div padding>
-        <button class="custom-button" ion-button type="submit">Sign in</button>
-      </div>
-    </form>
-    <div padding>
-      <button class="custom-button" ion-button color="secondary" (click)="onContinueWithFacebook()">
-        <ion-icon name="logo-facebook" padding-right></ion-icon>
-        Continue with facebook
-      </button>
-    </div>
-    <div padding>
-      <a> Forgot your password ?</a>
-    </div>
-    <div padding>
-      <a (click)="onCreateNewAccount()"> Create your account !</a>
-    </div>
-  </div>
+  <button class="custom-button" ion-button color="secondary" (click)="onContinueWithFacebook()">
+    <ion-icon name="logo-facebook" padding-right></ion-icon>
+    Continue with facebook
+  </button>
+  <button ion-button clear> Forgot your password ?</button>
+  <button ion-button clear (click)="onCreateNewAccount()"> Create your account !</button>
 </ion-content>

@@ -1,76 +1,41 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { UserService } from "../../providers/user/user.service";
-import { RegisterPage } from "../register/register";
-//import { Logger } from "@ionic/app-scripts/dist/logger/logger";
-import { AuthUser } from "../../model/classes/auth-user.class";
-import { User } from "../../model/classes/user.class";
-import { EventService } from "../../providers/event/event.service";
-import { EventsPage } from "../events/events";
-import { WishlistPage } from "../wishlist/wishlist";
-import { AddEventPage } from "../add-event/add-event";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { IonicPage, NavController } from 'ionic-angular';
 
-/**
- * Generated class for the LoginPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { AuthenticationService } from "../../providers/auth/auth.service";
 
-@IonicPage()
+@IonicPage({
+  name: 'login'
+})
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
 })
 export class LoginPage {
-
-  inputEmail: string = '';
-  inputPassword: string = '';
-  errorMessage: string = '';
+  errorMessage = '';
   loginForm: FormGroup;
 
-
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private userService: UserService,
-              private formBuilder: FormBuilder,
-              private eventService: EventService) {
+  constructor(
+    private navCtrl: NavController,
+    private authService: AuthenticationService,
+    private formBuilder: FormBuilder) {
     this.loginForm = this.formBuilder.group({
       email: ['', Validators.compose([Validators.email, Validators.required])],
       password: ['', Validators.compose([Validators.required])],
-    })
+    });
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
+    // console.log('ionViewDidLoad LoginPage');
   }
 
-  /**
-   * Method called when user sends login information
-   * TODO Implement method
-   */
-  onSubmit() {
-    this.userService.getUserByEmailAndPassword(this.inputEmail, this.inputPassword).subscribe(
-      response => {
-        let user: User = new User("");
-        user = AuthUser.fromAuthUserInterface(response).toUser();
-        this.userService.connectedUser = user;
-      },
+  login() {
+    this.authService.login(this.loginForm.controls.email.value, this.loginForm.controls.password.value).subscribe(
+      response => this.navCtrl.pop(),
       error => {
         this.errorMessage = "Wrong email or wrong password."
         console.log(error);
-      },
-      () => {
-        // if the user is not in the middle of an event modification, he's redirected to the first page( EventsPage)
-        this.errorMessage = '';
-        if (this.eventService.currentEvent == null) this.navCtrl.push(AddEventPage);
-        else if (this.eventService.currentEvent != null) {
-          this.eventService.currentEvent.hostId = this.userService.connectedUser.uuid;
-          this.navCtrl.push(WishlistPage);
-        }
-      }
-    )
+      });
   }
 
   /**
@@ -84,6 +49,6 @@ export class LoginPage {
    * Method called when user clicks on a link to create an account
    */
   onCreateNewAccount() {
-    this.navCtrl.push(RegisterPage);
+    this.navCtrl.push('register');
   }
 }

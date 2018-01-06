@@ -1,57 +1,41 @@
-import { UUID } from "angular2-uuid";
-import { UserInterface } from "../interfaces/user.model";
+import { IUser } from "../interfaces/user.model";
 
-export class User implements UserInterface {
-  private _uuid: string;
-  private _nickname: string;
-  private _email: string;
-  private _profilePicture: string;
+export class User implements IUser {
+  _id: string;
+  nickname: string;
+  email: string;
+  profilePicture: string;
 
-  constructor(nickname: string, email: string = '', profilePicture: string = '') {
-    this.uuid = UUID.UUID();
+  constructor(nickname: string, email: string, profilePicture: string = '') {
     this.nickname = nickname;
     this.email = email;
     this.profilePicture = profilePicture;
   }
 
-  toUserInterface(): UserInterface {
+  toUserInterface(): IUser {
     return {
-      uuid: this.uuid,
+      _id: this._id,
       nickname: this.nickname,
       email: this.email,
       profilePicture: this.profilePicture
     }
   }
 
-  get uuid(): string {
-    return this._uuid;
+  static fromUserI(value: IUser): User {
+    let user = new User('', '');
+    user._id = value._id;
+    user.nickname = value.nickname;
+    user.email = value.email;
+    user.profilePicture = value.profilePicture;
+
+    return user;
   }
 
-  set uuid(value: string) {
-    this._uuid = value;
+  get id() {
+    return this._id;
   }
 
-  get nickname(): string {
-    return this._nickname;
-  }
-
-  set nickname(value: string) {
-    this._nickname = value;
-  }
-
-  get email(): string {
-    return this._email;
-  }
-
-  set email(value: string) {
-    this._email = value;
-  }
-
-  get profilePicture(): string {
-    return this._profilePicture;
-  }
-
-  set profilePicture(value: string) {
-    this._profilePicture = value;
+  set id(value: string) {
+    this._id = value;
   }
 }

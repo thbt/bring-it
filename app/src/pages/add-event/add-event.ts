@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController } from 'ionic-angular';
+
 import { EventService } from "../../providers/event/event.service";
-import { UserService } from "../../providers/user/user.service";
-import { LoginPage } from "../login/login";
+import { AuthenticationService } from '../../providers/auth/auth.service';
+
 import { BringItEvent } from "../../model/classes/event.class";
-import { AuthUser } from "../../model/classes/auth-user.class";
-import { WishlistPage } from "../wishlist/wishlist";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { IUser } from '../../model/interfaces/user.model';
 
 /**
  * Generated class for the AddEventPage page.
@@ -15,66 +14,65 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
  * Ionic pages and navigation.
  */
 
-@IonicPage()
+@IonicPage({
+  name: 'add-event',
+  segment: 'events/new',
+  defaultHistory: ['events']
+
+})
 @Component({
   selector: 'page-add-event',
   templateUrl: 'add-event.html',
 })
 export class AddEventPage {
   optionsCollapsed = true;
-  event: BringItEvent;
-  eventForm: FormGroup;
+  event = new BringItEvent(null, null, null);
+  currentUser: IUser | null;
 
+  constructor(
+    private navCtrl: NavController,
+    private eventService: EventService,
+    private authService: AuthenticationService,
+  ) {
+    this.authService.currentUser.subscribe(
+      user => {
+        this.currentUser = user;
+        if(this.currentUser)
+          this.event.hostId = this.currentUser._id;
+      },
+      err => console.log(err));
 
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private eventService: EventService,
-              private formBuilder: FormBuilder,
-              private userService: UserService) {
-    this.eventForm = this.formBuilder.group({
-      eventName: ['', Validators.compose([Validators.required])],
-      eventType: ['', Validators.compose([Validators.required])],
-      eventTheme: [''],
-      eventDate: [''],
-      eventLocation: [''],
-      eventDescription: ['']
-    })
-    let temporaryUser = new AuthUser('', '', '');
-    this.eventService.currentEvent != null ?
-      this.event = this.eventService.currentEvent : this.event = new BringItEvent('', '', temporaryUser.uuid);
+    // let temporaryUser = new AuthUser('', '', '');
+    // this.eventService.currentEvent != null ? this.event = this.eventService.currentEvent : this.event = new BringItEvent('', '', temporaryUser.id);
+    // if (this.userService.connectedUser != null) this.event.hostId = this.userService.connectedUser.id;
+  }
 
-    if (this.userService.connectedUser != null) this.event.hostId = this.userService.connectedUser.uuid;
+  ionViewCanEnter() {
+    return this.authService.isUserLogged();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad AddEventPage');
   }
 
+  createEvent() {
+    console.log(this.currentUser, this.event);
+    if (!!this.event.hostId) console.log('hhh');
 
-  /**
-   * Method called when user clicks on the "Create Event" button
-   */
-  onCreateEvent() {
     // First, event is saved in service
-    this.eventService.currentEvent = this.event;
-    this.eventService.postEvent(this.event.toBringItEventInterface()).subscribe(response => {
-
+    this.eventService.post(this.event).subscribe(
+      response => {
+        console.log(response);
+        this.navCtrl.setRoot('events');
+        this.navCtrl.push('event-page', { id: response._id });
       },
-      error => {
-        console.log(error);
-      },
-      () => {
-        console.log(" Event has ben created");
+      error => console.log(error));
 
-        // Second,  if user is authenticated in app, let's post event and redirect him through wishlist page
-        if (this.userService.connectedUser != null)
-          this.navCtrl.push(WishlistPage);
+    // Second,  if user is authenticated in app, let's post event and redirect him through wishlist page
+    //if (this.userService.connectedUser != null)
+    //  this.navCtrl.push(WishlistPage);
 
-        // if he's not, post the event but redirect him through login page
-        else this.navCtrl.push(LoginPage);
-
-      })
-
-
+    // if he's not, post the event but redirect him through login page
+    //else this.navCtrl.push(LoginPage);
   }
 }

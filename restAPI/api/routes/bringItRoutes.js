@@ -20,11 +20,11 @@ module.exports = function (app) {
         .get(bringIt.list_all_events)
         .post(bringIt.create_an_event);
 
-    app.route('/events/search')
+    app.route('/users/:id/events')
         .get(bringIt.list_all_events_from_one_user)
 
 
-    app.route('/events/:eventUuid')
+    app.route('/events/:id')
         .get(bringIt.read_an_event)
         .put(bringIt.update_an_event)
         .delete(bringIt.delete_an_event);
