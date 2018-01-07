@@ -14,7 +14,7 @@ class ItemList(generics.ListCreateAPIView):
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(suggestedBy=self.request.user.profile)
 
 
 class ItemDetails(generics.RetrieveUpdateDestroyAPIView):
@@ -29,7 +29,8 @@ class ItemDetails(generics.RetrieveUpdateDestroyAPIView):
 
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
-class SuggestedItemList(generics.ListCreateAPIView):
+
+class SuggestedItemList(APIView):
     def get(self, request):
         try:
             items = Item.objects.filter(isApproved=False)
@@ -46,6 +47,7 @@ class SuggestedItemList(generics.ListCreateAPIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ApprovedItemList(APIView):
     def get(self, request):
