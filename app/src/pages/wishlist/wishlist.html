@@ -18,16 +18,18 @@
 <ion-content padding>
   <ng-container *ngIf="!loading">
     <ion-grid>
-      <item *ngFor="let item of event?.items; let i = index" [item]="item" [isSelected]="item.broughtBy.indexOf(currentUser?.nickname) > -1"
-        (onUpvote)="upvoteItem(i)" (onDownvote)="downvoteItem(i, false)" (onSelect)="selectItem(i, false)"></item>
+      <item *ngFor="let item of event?.items; let i = index" [item]="item"
+            [isSelected]="item.broughtBy.indexOf(currentUser?.nickname) > -1"
+            (onUpvote)="upvoteItem(i)" (onDownvote)="downvoteItem(i, false)" (onSelect)="selectItem(i, false)"></item>
     </ion-grid>
 
-    <button ion-button clear (click)="suggestionsCollapsed = !suggestionsCollapsed">
+    <button ion-button clear (click)="collapseSuggestions = !collapseSuggestions">
       Suggestions &nbsp;
       <ion-icon [name]="collapseSuggestions ? 'arrow-dropdown' : 'arrow-dropup'"></ion-icon>
     </button>
     <ion-grid *ngIf="!collapseSuggestions">
-      <item *ngFor="let item of event?.suggestions; let i = index" [item]="item" (onUpvote)="upvoteItem(i, true)" (onDownvote)="downvoteItem(i, true)" (onSelect)="selectSuggestion(i)"></item>
+      <item *ngFor="let item of event?.suggestions; let i = index" [item]="item" (onUpvote)="upvoteItem(i, true)"
+            (onDownvote)="downvoteItem(i, true)" (onSelect)="selectSuggestion(i)"></item>
     </ion-grid>
   </ng-container>
   <ng-container *ngIf="loading">
@@ -38,7 +40,7 @@
 
 <ion-footer>
   <ion-row class="add-input-wrapper">
-    <ion-input [(ngModel)]="newItemName" placeholder="Add an item" clearInput="true" ></ion-input>
+    <ion-input [(ngModel)]="newItemName" placeholder="Add an item" clearInput="true"></ion-input>
     <button ion-button icon-only small [disabled]="newItemName.length==0" (click)="addItem()">
       <ion-icon name="add"></ion-icon>
     </button>
