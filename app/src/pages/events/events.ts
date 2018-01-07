@@ -1,28 +1,52 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AlertController, IonicPage, NavController, ViewController } from 'ionic-angular';
+import { EventService } from "../../providers/event/event.service";
+import { AuthenticationService } from "../../providers/auth/auth.service";
+import { User } from "../../model/classes/user.class";
 
-interface Event {
-  title: string;
-  date: Date;
-}
+import { IBringItEvent } from '../../model/interfaces/event.model';
 
-/**
- * Generated class for the EventsPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
-@IonicPage()
+@IonicPage({
+  name: 'events',
+  segment: 'events',
+  defaultHistory: ['login']
+})
 @Component({
   selector: 'page-events',
   templateUrl: 'events.html',
 })
 export class EventsPage {
-  events: Event[];
+  public events: IBringItEvent[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-    // TODO remove mock data
-    this.events = [{title:"BBQ @ Thibaut's", date: new Date(2017, 5, 30)}];
+  constructor(
+    private viewCtrl: ViewController,
+    private navCtrl: NavController,
+    private eventService: EventService,
+    private authService: AuthenticationService,
+    private alertCtrl: AlertController
+  ) {
+    this.events = [];
+    this.viewCtrl.didEnter.subscribe(() => this.updateEvents());
+    this.authService.currentUser.subscribe(() => this.updateEvents());
+  }
+
+  updateEvents() {
+    if(this.authService.isUserRegistered()) {
+      this.eventService.getByUserId(this.authService.getCurrentUserValue()._id).subscribe(
+        res => this.events = res,
+        err => console.log(err));
+    }
+  }
+
+  /**
+   * Action made when user clicks on an event
+   * @param {BringItEvent} event
+   */
+  selectEvent(event: IBringItEvent) {
+    this.navCtrl.push('event-page', { id: event._id });
+  }
+
+  newEvent() {
+    this.navCtrl.push('add-event');
   }
 }

@@ -1,8 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-import { SplashScreen } from '@ionic-native/splash-screen';
+import { IonicStorageModule } from '@ionic/storage';
 import { StatusBar } from '@ionic-native/status-bar';
+import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -12,7 +13,11 @@ import { EventService } from '../providers/event/event.service';
 import { EventsPageModule } from '../pages/events/events.module';
 import { AddEventPageModule } from '../pages/add-event/add-event.module';
 import { LoginPageModule } from "../pages/login/login.module";
-import { HttpModule } from "@angular/http";
+import { RegisterPageModule } from "../pages/register/register.module";
+import { HttpClientModule } from "@angular/common/http";
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { AuthenticationService } from '../providers/auth/auth.service';
+
 
 @NgModule({
   declarations: [
@@ -22,11 +27,13 @@ import { HttpModule } from "@angular/http";
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot(),
     WishlistPageModule,
     EventsPageModule,
     AddEventPageModule,
     LoginPageModule,
-    HttpModule,
+    HttpClientModule,
+    RegisterPageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -39,6 +46,8 @@ import { HttpModule } from "@angular/http";
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UserService,
     EventService,
+    AuthenticationService,
+    SocialSharing,
   ]
 })
 export class AppModule {

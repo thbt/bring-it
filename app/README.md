@@ -24,3 +24,12 @@ $ ionic cordova run ios
 
 Substitute ios for android if not on a Mac.
 
+# Notes
+
+## TODO
+
+* Mettre les route guards
+* (opt) empecher deux invités d'un même event d'avoir le même nom sur l'event
+
+## Gestion utilisateur déconnecté
+

@@ -1,12 +1,24 @@
-import {NgModule} from '@angular/core';
-import {ItemsComponent} from './items/items';
-import {IonicPageModule} from "ionic-angular";
+import { NgModule } from '@angular/core';
+import { IonicPageModule } from "ionic-angular";
+import { ItemComponent } from './item/item';
+import { AccountComponent } from './account/account';
+import { AccountPopoverComponent } from './account-popover/account-popover';
 
 @NgModule({
-  declarations: [ItemsComponent],
-  imports: [IonicPageModule.forChild(ItemsComponent),
+  declarations: [
+    ItemComponent,
+    AccountComponent,
+    AccountPopoverComponent
+
   ],
-  exports: [ItemsComponent]
+  entryComponents: [AccountPopoverComponent],
+  imports: [IonicPageModule.forChild(ItemComponent),
+  ],
+  exports: [
+    ItemComponent,
+    AccountComponent,
+    AccountPopoverComponent
+  ]
 })
 export class ComponentsModule {
 }

@@ -1,0 +1,28 @@
+<!-- Generated template for the ItemComponent component -->
+<ion-row nowrap>
+  <ion-col col-1 align-self-center>
+    <ion-checkbox [checked]="isSelected" (click)="onSelect.emit()"></ion-checkbox>
+  </ion-col>
+
+  <ion-col col-8 align-self-center>
+    {{item.name}} ({{item.broughtBy.length}}/{{item.quantity}})
+  </ion-col>
+
+  <ion-col col-3>
+    <ion-row nowrap text-center>
+      <ion-col>
+        <button ion-button icon-only round outline small (click)="onUpvote.emit()">
+          <ion-icon name="thumbs-up"></ion-icon>
+          <br>
+        </button>
+        {{item.upvoters.length}}
+      </ion-col>
+      <ion-col>
+        <button ion-button icon-only round outline small (click)="onDownvote.emit()">
+          <ion-icon name="thumbs-down"></ion-icon>
+        </button>
+        {{item.downvoters.length}}
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>

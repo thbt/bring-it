@@ -1,41 +1,56 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { IonicPage, NavController } from 'ionic-angular';
 
-/**
- * Generated class for the LoginPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
+import { AuthenticationService } from "../../providers/auth/auth.service";
 
-@IonicPage()
+@IonicPage({
+  name: 'login',
+  segment: 'login'
+})
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
 })
 export class LoginPage {
+  errorMessage = '';
+  loginForm: FormGroup;
 
-  inputEmail: string = '';
-  inputPassword: string = '';
-
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(
+    private navCtrl: NavController,
+    private authService: AuthenticationService,
+    private formBuilder: FormBuilder) {
+    this.loginForm = this.formBuilder.group({
+      email: ['', Validators.compose([Validators.email, Validators.required])],
+      password: ['', Validators.compose([Validators.required])],
+    });
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
+    // console.log('ionViewDidLoad LoginPage');
   }
 
-  /**
-   * Method called when user sends login information
-   * TODO Implement method
-   */
-  onSubmit() {
+  login() {
+    this.authService.login(this.loginForm.controls.email.value, this.loginForm.controls.password.value).subscribe(
+      response => this.navCtrl.pop(),
+      error => {
+        this.errorMessage = "Wrong email or wrong password."
+        console.log(error);
+      });
   }
 
   /**
    * Method called when user clicks on the facebook button
    * TODO Implement method
    */
-  onContinueWithFacebook(){
+  onContinueWithFacebook() {
+  }
+
+  /**
+   * Method called when user clicks on a link to create an account
+   */
+  onCreateNewAccount() {
+    this.navCtrl.push('register');
+    this.navCtrl.setRoot('events')
   }
 }
