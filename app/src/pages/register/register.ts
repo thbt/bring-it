@@ -10,7 +10,8 @@ import { AuthUserInterface } from "../../model/interfaces/auth-user.model";
 
 
 @IonicPage({
-  name: 'register'
+  name: 'register',
+  segment: 'register'
 })
 @Component({
   selector: 'page-register',
@@ -60,16 +61,17 @@ export class RegisterPage {
     }
 
     this.userService.post(newUser).subscribe(
-      response => this.authService.login(newUser.email, newUser.password).subscribe(res => this.navCtrl.popToRoot()),
-      (err: HttpErrorResponse) => {
-        if (err.error instanceof Error) {
-          // A client-side or network error occurred. Handle it accordingly.
-          console.log('An error occurred:', err.error.message);
-        } else {
-          // The backend returned an unsuccessful response code.
-          console.log(`Backend returned code ${err.status}, body was:`);
-          console.log(JSON.parse(err.error));
-        }
+      response => this.authService.login(newUser.email, newUser.password).subscribe(
+        res => this.navCtrl.push('events')),
+        (err: HttpErrorResponse) => {
+          if (err.error instanceof Error) {
+            // A client-side or network error occurred. Handle it accordingly.
+            console.log('An error occurred:', err.error.message);
+          } else {
+            // The backend returned an unsuccessful response code.
+            console.log(`Backend returned code ${err.status}, body was:`);
+            console.log(JSON.parse(err.error));
+          }
       });
   }
 

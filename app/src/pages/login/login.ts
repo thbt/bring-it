@@ -5,7 +5,8 @@ import { IonicPage, NavController } from 'ionic-angular';
 import { AuthenticationService } from "../../providers/auth/auth.service";
 
 @IonicPage({
-  name: 'login'
+  name: 'login',
+  segment: 'login'
 })
 @Component({
   selector: 'page-login',
@@ -50,5 +51,6 @@ export class LoginPage {
    */
   onCreateNewAccount() {
     this.navCtrl.push('register');
+    this.navCtrl.setRoot('events')
   }
 }
