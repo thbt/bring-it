@@ -7,9 +7,10 @@ import { EventService } from '../../providers/event/event.service';
 import { IBringItEvent } from '../../model/interfaces/event.model';
 import { IUser } from '../../model/interfaces/user.model';
 import { BringItItem } from "../../model/classes/item.class";
-
+import { IntervalObservable } from "rxjs/observable/IntervalObservable";
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { EventsPage } from "../events/events";
+import { TimerObservable } from "rxjs/observable/TimerObservable";
 
 @IonicPage({
   name: 'event-page',
@@ -27,57 +28,70 @@ export class WishlistPage {
   currentUser: IUser | null;
   suggestions = Array<BringItItem>();
   items = Array<BringItItem>();
+  alive: boolean; // used to unsubscribe from the TimerObservable when ionViewDidLeave is called.
+  interval: number;
+
 
   collapseSuggestions: boolean = false;
 
-  constructor(
-    private navCtrl: NavController,
-    private navParams: NavParams,
-    private viewCtrl: ViewController,
-    private eventService: EventService,
-    private authService: AuthenticationService,
-    private socialSharing: SocialSharing,
-    private alertCtrl: AlertController
-  ) {
+  constructor(private navCtrl: NavController,
+              private navParams: NavParams,
+              private viewCtrl: ViewController,
+              private eventService: EventService,
+              private authService: AuthenticationService,
+              private socialSharing: SocialSharing,
+              private alertCtrl: AlertController) {
     if (!this.navParams.get('id')) {
+      this.alive = true;
+      this.interval = 10000;
       console.log('eventId was not sent, popping the view.');
       this.navCtrl.pop();
     }
 
     this.viewCtrl.didEnter.subscribe(() =>
-      this.eventService.getById(this.navParams.get('id')).subscribe(
-        res => {
-          this.event = res;
+      TimerObservable.create(0, this.interval)
+        .takeWhile(() => this.alive)
+        .subscribe(() => {
+          this.eventService.getById(this.navParams.get('id')).subscribe(
+            res => {
+              this.event = res;
 
-          this.authService.retrieveUserFromStorage()
-            .then(user => {
-              if(!!user) {
-                // user in local storage, verify it is linked to an event guest
-                if (this.event.guests.findIndex(g => g.userId === user._id) < 0)
-                  this.navCtrl.push('select-guest', {id: this.navParams.get('id')});
-                else
-                  this.loading = false;
-              } else if (!!this.authService.getCurrentUserValue() &&
-                         this.event.guests.findIndex(g => g.name === this.authService.getCurrentUserValue().nickname) > -1) {
+              this.authService.retrieveUserFromStorage()
+                .then(user => {
+                  if (!!user) {
+                    // user in local storage, verify it is linked to an event guest
+                    if (this.event.guests.findIndex(g => g.userId === user._id) < 0)
+                      this.navCtrl.push('select-guest', {id: this.navParams.get('id')});
+                    else
+                      this.loading = false;
+                  } else if (!!this.authService.getCurrentUserValue() &&
+                    this.event.guests.findIndex(g => g.name === this.authService.getCurrentUserValue().nickname) > -1) {
+                    // unauthentified user in memory linked to event's guest
+                    this.loading = false;
+                  } else {
+                    // no user in local storage or in memory
+                    this.navCtrl.push('select-guest', {id: this.navParams.get('id')});
+                  }
+                }).catch((err) => {
+                console.log(err);
+                // couldn't retrieve user; so let's check memory
                 // unauthentified user in memory linked to event's guest
-                this.loading = false;
-              } else {
-                // no user in local storage or in memory
-                this.navCtrl.push('select-guest', {id: this.navParams.get('id')});
-              }
-            }).catch((err) => {
-              console.log(err);
-              // couldn't retrieve user; so let's check memory
-              // unauthentified user in memory linked to event's guest
-              if (this.event.guests.findIndex(g => g.name === this.authService.getCurrentUserValue().nickname) > -1)
-                this.loading = false;
-            });
-        },
-        err => console.log(err)));
+                if (this.event.guests.findIndex(g => g.name === this.authService.getCurrentUserValue().nickname) > -1)
+                  this.loading = false;
+              });
+            },
+            err => console.log(err));
+        })
+    );
 
     this.authService.currentUser.subscribe(
       user => this.currentUser = user,
       err => console.log(err));
+  }
+
+  ionViewDidLeaveLeave() {
+    console.log("Exits Wishlist page");
+    this.alive = false;
   }
 
 
@@ -103,7 +117,7 @@ export class WishlistPage {
   upvoteItem(itemIndex: number, isSuggestion: boolean) {
     let item = isSuggestion ? this.event.suggestions[itemIndex] : this.event.items[itemIndex];
 
-    if(item.upvoters.indexOf(this.currentUser.nickname) > -1)
+    if (item.upvoters.indexOf(this.currentUser.nickname) > -1)
       item.upvoters = item.upvoters.filter(i => i !== this.currentUser.nickname);
     else
       item.upvoters.push(this.currentUser.nickname);
@@ -121,7 +135,7 @@ export class WishlistPage {
   downvoteItem(itemIndex: number, isSuggestion: boolean) {
     let item = isSuggestion ? this.event.suggestions[itemIndex] : this.event.items[itemIndex];
 
-    if(item.downvoters.indexOf(this.currentUser.nickname) > -1)
+    if (item.downvoters.indexOf(this.currentUser.nickname) > -1)
       item.downvoters = item.downvoters.filter(i => i !== this.currentUser.nickname);
     else
       item.downvoters.push(this.currentUser.nickname);
@@ -139,7 +153,7 @@ export class WishlistPage {
   selectSuggestion(itemIndex: number) {
     let item = this.event.suggestions[itemIndex];
 
-    if(this.currentUser && this.currentUser._id == this.event.hostId) {
+    if (this.currentUser && this.currentUser._id == this.event.hostId) {
       this.event.items.push(item);
       this.event.suggestions.splice(itemIndex, 1);
     }
@@ -150,7 +164,7 @@ export class WishlistPage {
   selectItem(itemIndex: number) { // TODO fix issue ?
     let item = this.event.items[itemIndex];
 
-    if(item.broughtBy.indexOf(this.currentUser.nickname) > -1) {
+    if (item.broughtBy.indexOf(this.currentUser.nickname) > -1) {
       item.broughtBy = item.broughtBy.filter(i => i !== this.currentUser.nickname);
     } else {
       item.broughtBy.push(this.currentUser.nickname);
