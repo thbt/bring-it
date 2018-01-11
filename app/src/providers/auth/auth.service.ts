@@ -30,7 +30,7 @@ export class AuthenticationService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<IUser>('http://localhost:3000/login', { email: email, password: password })
+    return this.http.post<IUser>('http://thibaut-roy.fr:3000/login', { email: email, password: password })
       .map(user => {
         console.log('login response: ', user);
         this.storage.set('localUser', user);

@@ -10,8 +10,8 @@ import { AuthUserInterface } from "../../model/interfaces/auth-user.model";
 */
 @Injectable()
 export class UserService {
-  private loginURL: string = "http://localhost:3000/login"
-  private userURL: string = "http://localhost:3000/users";
+  private loginURL: string = "http://thibaut-roy.fr:3000/login"
+  private userURL: string = "http://thibaut-roy.fr:3000/users";
 
   constructor(public http: HttpClient) {}
 

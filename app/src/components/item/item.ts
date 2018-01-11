@@ -18,6 +18,7 @@ export class ItemComponent {
   @Output() onUpvote = new EventEmitter();
   @Output() onDownvote = new EventEmitter();
   @Output() onSelect = new EventEmitter();
+  @Output() onClick = new EventEmitter();
 
   constructor() {}
 }

@@ -10,6 +10,14 @@ import { BringItItem } from "../../model/classes/item.class";
 
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { EventsPage } from "../events/events";
+import { ModalController } from 'ionic-angular/components/modal/modal-controller';
+import { PopoverController } from 'ionic-angular/components/popover/popover-controller';
+import { ItemDetailsComponent } from '../../components/item-details/item-details';
+
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/observable/timer';
+import { Subscription } from 'rxjs/Subscription';
 
 @IonicPage({
   name: 'event-page',
@@ -28,6 +36,8 @@ export class WishlistPage {
   suggestions = Array<BringItItem>();
   items = Array<BringItItem>();
 
+  timerSub: Subscription;
+
   collapseSuggestions: boolean = false;
 
   constructor(
@@ -37,6 +47,7 @@ export class WishlistPage {
     private eventService: EventService,
     private authService: AuthenticationService,
     private socialSharing: SocialSharing,
+    private popoverCtrl: PopoverController,
   ) {
     if (!this.navParams.get('id')) {
       console.log('eventId was not sent, popping the view.');
@@ -47,6 +58,7 @@ export class WishlistPage {
       this.eventService.getById(this.navParams.get('id')).subscribe(
         res => {
           this.event = res;
+          this.startEventPolling();
 
           this.authService.retrieveUserFromStorage()
             .then(user => {
@@ -81,6 +93,12 @@ export class WishlistPage {
       err => console.log(err));
   }
 
+  startEventPolling() {
+    this.timerSub = Observable.interval(1000).subscribe(() => this.eventService.getById(this.navParams.get('id')).subscribe(res => this.event = res)); }
+
+  ionViewDidLeave(){
+   this.timerSub.unsubscribe();
+  }
 
   /**
    * Method called when the user clicks on the "+" button.
@@ -99,6 +117,12 @@ export class WishlistPage {
       this.event.items.push(newItem.toBringItItemInterface());
       this.updateEvent();
     }
+  }
+
+  onItemClick(itemIndex: number, isSuggestion: boolean) {
+    let item = isSuggestion ? this.event.suggestions[itemIndex] : this.event.items[itemIndex];
+    let popover = this.popoverCtrl.create(ItemDetailsComponent);//, {}, {cssClass: 'custom-popover'});
+    popover.present();
   }
 
   upvoteItem(itemIndex: number, isSuggestion: boolean) {

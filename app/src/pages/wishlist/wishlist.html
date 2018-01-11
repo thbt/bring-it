@@ -19,7 +19,7 @@
   <ng-container *ngIf="!loading">
     <ion-grid>
       <item *ngFor="let item of event?.items; let i = index" [item]="item"
-            [isSelected]="item.broughtBy.indexOf(currentUser?.nickname) > -1"
+            [isSelected]="item.broughtBy.indexOf(currentUser?.nickname) > -1" (onClick)="onItemClick(i, false)"
             (onUpvote)="upvoteItem(i)" (onDownvote)="downvoteItem(i, false)" (onSelect)="selectItem(i, false)"></item>
     </ion-grid>
 

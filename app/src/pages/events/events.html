@@ -10,12 +10,16 @@
 <ion-content padding text-center>
 
   <div padding><h4>Welcome to Bring it !</h4>
-    <p>You will finally know who brings what at your event !</p></div>
+    <p>You will finally know who brings what at your event !</p>
+  </div>
 
+  <div padding *ngIf="!isUserConnected">
+    It looks like you are not connected...<br>
+    <button ion-button margin color="secondary" (click)="login()" padding>Log In</button>
+    <button ion-button margin color="secondary" (click)="register()" padding>Register</button>
+  </div>
 
-  <div padding>
-
-
+  <div *ngIf="isUserConnected" padding>
     <button ion-button clear (click)="collapseUserEvents = !collapseUserEvents">
       My events &nbsp;
       <ion-icon [name]="collapseUserEvents ? 'arrow-dropdown' : 'arrow-dropup'"></ion-icon>
