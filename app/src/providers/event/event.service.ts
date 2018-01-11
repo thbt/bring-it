@@ -16,11 +16,11 @@ import { BringItEvent } from "../../model/classes/event.class";
 export class EventService {
 
   //TODO insert constance in eventURL variable
-  private _eventURL: string = "http://localhost:3000/events";
+  private _eventURL: string = "http://thibaut-roy.fr:3000/events";
 
   //TODO Define what is the URL that will be shared with others
   // By clicking on that link, people should directly come  on the wishlist page
-  private _sharedURL: string = "http://localhost:3000/"
+  private _sharedURL: string = "http://thibaut-roy.fr:3000/"
   private _currentEvent: BringItEvent = null;
 
 
@@ -42,7 +42,7 @@ export class EventService {
    * @returns {Observable<IBringItEvent>}
    */
   getByUserId(userId: string) {
-    return this.http.get<IBringItEvent[]>('http://localhost:3000/users/' + userId + '/events');
+    return this.http.get<IBringItEvent[]>('http://thibaut-roy.fr:3000/users/' + userId + '/events');
   }
 
   /**

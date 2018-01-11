@@ -1,0 +1,21 @@
+<!-- Generated template for the ItemDetailsComponent component -->
+<div padding>
+
+  <h3>Item: <b>{{item.name}}</b></h3>
+
+  <ion-item>
+    <ion-label color="primary" stacked>Required quantity</ion-label>
+    <ion-input type="number" [(ngModel)]="item.quantity"></ion-input>
+  </ion-item>
+
+  Suggested by: {{item.suggestedBy}}<br>
+  Brought by:
+  <ul>
+    <li *ngFor="let name of item.broughtBy">{{name}}</li>
+  </ul>
+  <div>
+    <button ion-button round outline icon-only (click)="close()"><ion-icon name="close"></ion-icon></button>
+    <button ion-button round outline icon-only (click)="delete.emit()"><ion-icon name="trash"></ion-icon></button>
+    <button ion-button round outline icon-only (click)="modify.emit()"><ion-icon name="checkmark"></ion-icon></button>
+  </div>
+</div>

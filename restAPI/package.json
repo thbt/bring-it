@@ -19,6 +19,7 @@
   "dependencies": {
     "bcrypt": "^1.0.3",
     "express": "^4.16.2",
+    "express-ws": "^3.0.0",
     "mongoose": "^4.13.7"
   }
 }

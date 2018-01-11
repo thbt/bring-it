@@ -4,11 +4,13 @@ var express = require('express'),
     mongoose = require('mongoose'),
     User = require('./api/models/userModel'), //created user model loading here
     Event = require('./api/models/eventModel'), //created event model loading here
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    expressWs = require('express-ws')(app);
+
 
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/BringItdb');
+mongoose.connect('mongodb://localhost/BringItdb', {useMongoClient: true});
 
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -18,7 +20,7 @@ app.use(bodyParser.json());
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8100');
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');

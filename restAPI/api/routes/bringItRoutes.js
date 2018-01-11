@@ -28,4 +28,5 @@ module.exports = function (app) {
         .get(bringIt.read_an_event)
         .put(bringIt.update_an_event)
         .delete(bringIt.delete_an_event);
+
 };

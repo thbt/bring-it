@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController, IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
 import { AuthenticationService } from '../../providers/auth/auth.service';
 import { EventService } from '../../providers/event/event.service';
@@ -10,6 +10,14 @@ import { BringItItem } from "../../model/classes/item.class";
 
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { EventsPage } from "../events/events";
+import { ModalController } from 'ionic-angular/components/modal/modal-controller';
+import { PopoverController } from 'ionic-angular/components/popover/popover-controller';
+import { ItemDetailsComponent } from '../../components/item-details/item-details';
+
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/observable/timer';
+import { Subscription } from 'rxjs/Subscription';
 
 @IonicPage({
   name: 'event-page',
@@ -28,6 +36,8 @@ export class WishlistPage {
   suggestions = Array<BringItItem>();
   items = Array<BringItItem>();
 
+  timerSub: Subscription;
+
   collapseSuggestions: boolean = false;
 
   constructor(
@@ -37,7 +47,7 @@ export class WishlistPage {
     private eventService: EventService,
     private authService: AuthenticationService,
     private socialSharing: SocialSharing,
-    private alertCtrl: AlertController
+    private popoverCtrl: PopoverController,
   ) {
     if (!this.navParams.get('id')) {
       console.log('eventId was not sent, popping the view.');
@@ -48,12 +58,15 @@ export class WishlistPage {
       this.eventService.getById(this.navParams.get('id')).subscribe(
         res => {
           this.event = res;
+          this.startEventPolling();
 
           this.authService.retrieveUserFromStorage()
             .then(user => {
               if(!!user) {
+                if (this.event.hostId === user._id)
+                  this.loading = false;
                 // user in local storage, verify it is linked to an event guest
-                if (this.event.guests.findIndex(g => g.userId === user._id) < 0)
+                else if (this.event.guests.findIndex(g => g.userId === user._id) < 0)
                   this.navCtrl.push('select-guest', {id: this.navParams.get('id')});
                 else
                   this.loading = false;
@@ -80,6 +93,12 @@ export class WishlistPage {
       err => console.log(err));
   }
 
+  startEventPolling() {
+    this.timerSub = Observable.interval(1000).subscribe(() => this.eventService.getById(this.navParams.get('id')).subscribe(res => this.event = res)); }
+
+  ionViewDidLeave(){
+   this.timerSub.unsubscribe();
+  }
 
   /**
    * Method called when the user clicks on the "+" button.
@@ -88,7 +107,7 @@ export class WishlistPage {
   addItem() {
     let newItem = new BringItItem(this.newItemName);
     newItem.suggestedBy = this.currentUser.nickname;
-    newItem.upvoters.push(this.currentUser.nickname);
+    //newItem.upvoters.push(this.currentUser.nickname);
 
     // If the new item is not added by the creator of the event, then it goes in the suggestion list
     if (this.currentUser && this.event.hostId != this.currentUser._id) {
@@ -98,6 +117,12 @@ export class WishlistPage {
       this.event.items.push(newItem.toBringItItemInterface());
       this.updateEvent();
     }
+  }
+
+  onItemClick(itemIndex: number, isSuggestion: boolean) {
+    let item = isSuggestion ? this.event.suggestions[itemIndex] : this.event.items[itemIndex];
+    let popover = this.popoverCtrl.create(ItemDetailsComponent);//, {}, {cssClass: 'custom-popover'});
+    popover.present();
   }
 
   upvoteItem(itemIndex: number, isSuggestion: boolean) {
@@ -159,18 +184,8 @@ export class WishlistPage {
     this.updateEvent();
   }
 
-  /**
-   * Method called when the user clicks on the "share" button to share his event
-   */
   shareEvent() {
-    // Check if sharing via email is supported
-    this.socialSharing.share(this.eventService.sharedURL).then(() => {
-      console.log('todo');
-      // Sharing via email is possible
-    }).catch(() => {
-      console.log('todo');
-      // Sharing via email is not possible
-    });
+    this.socialSharing.share('Come help me plan my event on BringIt!','BringIt! Invite', '', window.location.href).catch(console.error);
   }
 
   /**

@@ -5,7 +5,9 @@
   </ion-col>
 
   <ion-col col-8 align-self-center>
-    {{item.name}} ({{item.broughtBy.length}}/{{item.quantity}})
+    <button ion-button clear (click)="onClick.emit()">
+      {{item.name}} ({{item.broughtBy.length}}/{{item.quantity}})
+    </button>
   </ion-col>
 
   <ion-col col-3>

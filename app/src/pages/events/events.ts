@@ -17,6 +17,7 @@ import { IBringItEvent } from '../../model/interfaces/event.model';
 })
 export class EventsPage {
   public events: IBringItEvent[];
+  public isUserConnected = false;
 
   constructor(
     private viewCtrl: ViewController,
@@ -32,9 +33,13 @@ export class EventsPage {
 
   updateEvents() {
     if(this.authService.isUserRegistered()) {
+      this.isUserConnected = true;
       this.eventService.getByUserId(this.authService.getCurrentUserValue()._id).subscribe(
         res => this.events = res,
         err => console.log(err));
+    } else {
+      this.isUserConnected = false;
+      this.events = [];
     }
   }
 
@@ -48,5 +53,13 @@ export class EventsPage {
 
   newEvent() {
     this.navCtrl.push('add-event');
+  }
+
+  login() {
+    this.navCtrl.push('login');
+  }
+
+  register() {
+    this.navCtrl.push('register');
   }
 }
